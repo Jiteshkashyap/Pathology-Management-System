@@ -9,7 +9,7 @@
 ### Backend
 - Node.js
 - Express.js
-- PostgreSQL
+- MongoDB
 - JWT Authentication (Access + Refresh Tokens)
 - Redis (Caching)
 - Joi (Validation)
@@ -149,5 +149,6 @@ This project fulfills all requirements mentioned in the assessment brief, includ
 - Responsive UI
 
 ---
+
 
 
