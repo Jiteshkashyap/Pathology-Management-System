@@ -1,0 +1,189 @@
+import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  getDoctors,
+  createDoctor,
+  updateDoctor,
+  deleteDoctor,
+} from "../services/apiServices.js";
+
+import {
+  setDoctors,
+  addDoctorState,
+  updateDoctorState,
+  deleteDoctorState,
+  setDoctorLoading,
+  setDoctorError,
+} from "../redux/doctorSlice";
+
+import Modal from "../components/Modal";
+import ConfirmDeleteModal from "../components/ConfirmDeleteModal";
+import DoctorForm from "../forms/DoctorForm";
+
+const Doctors = () => {
+  const dispatch = useDispatch();
+  const { doctors, loading, error } = useSelector(
+    (state) => state.doctors
+  );
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isDeleteOpen, setIsDeleteOpen] = useState(false);
+  const [selectedDoctor, setSelectedDoctor] = useState(null);
+
+  
+
+  useEffect(() => {
+    const fetchAllDoctors = async () => {
+      try {
+        dispatch(setDoctorLoading(true));
+        const data = await getDoctors();
+        dispatch(setDoctors(data.data));
+      } catch (err) {
+        dispatch(
+          setDoctorError(
+            err.response?.data?.message || "Failed to fetch doctors"
+          )
+        );
+      }
+    };
+
+    fetchAllDoctors();
+  }, [dispatch]);
+
+  
+
+const handleSubmit = async (formData) => {
+  try {
+    dispatch(setDoctorLoading(true));
+
+    if (selectedDoctor) {
+      const response = await updateDoctor(
+        selectedDoctor._id,
+        formData
+      );
+
+      dispatch(updateDoctorState(response.data));
+    } else {
+      const response = await createDoctor(formData);
+      dispatch(addDoctorState(response.data));
+    }
+
+    dispatch(setDoctorLoading(false));
+
+    setIsModalOpen(false);
+    setSelectedDoctor(null);
+  } catch (err) {
+    dispatch(
+      setDoctorError(
+        err.response?.data?.message || "Operation failed"
+      )
+    );
+  }
+};
+
+ 
+
+  const confirmDelete = async () => {
+    try {
+      await deleteDoctor(selectedDoctor._id);
+      dispatch(deleteDoctorState(selectedDoctor._id));
+      setIsDeleteOpen(false);
+    } catch (err) {
+      dispatch(
+        setDoctorError(
+          err.response?.data?.message || "Delete failed"
+        )
+      );
+    }
+  };
+
+  return (
+    <div className="bg-white p-6 rounded-2xl shadow-md">
+
+      <div className="flex justify-between mb-6">
+        <h2 className="text-xl font-semibold">
+          Doctor Management
+        </h2>
+
+        <button
+          onClick={() => {
+            setSelectedDoctor(null);
+            setIsModalOpen(true);
+          }}
+          className="bg-blue-600 text-white px-4 py-2 rounded-lg"
+        >
+          + Add Doctor
+        </button>
+      </div>
+
+      {loading && <p>Loading...</p>}
+      {error && <p className="text-red-500">{error}</p>}
+
+      <table className="w-full text-left border-collapse">
+        <thead>
+    <tr className="border-b bg-gray-50 text-sm text-gray-600">
+      <th className="py-3 px-2">Name</th>
+      <th className="px-2">Email</th>
+      <th className="px-2">Specialization</th>
+      <th className="px-2">Mobile No</th>
+      <th className="px-2 text-right">Actions</th>
+    </tr>
+  </thead>
+        <tbody>
+          {doctors.map((doc) => (
+            <tr key={doc._id} className="border-b">
+              <td className="py-3">{doc.name}</td>
+              <td>{doc.email}</td>
+              <td>{doc.specialization}</td>
+              <td>{doc.phone}</td>
+              <td className="text-right space-x-3">
+                <button
+                  onClick={() => {
+                    setSelectedDoctor(doc);
+                    setIsModalOpen(true);
+                  }}
+                  className="text-blue-600 text-sm"
+                >
+                  Edit
+                </button>
+
+                <button
+                  onClick={() => {
+                    setSelectedDoctor(doc);
+                    setIsDeleteOpen(true);
+                  }}
+                  className="text-red-600 text-sm"
+                >
+                  Delete
+                </button>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+
+      {/* Modal */}
+      <Modal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        title={selectedDoctor ? "Update Doctor" : "Create Doctor"}
+      >
+        <DoctorForm
+          initialData={selectedDoctor}
+          onSubmit={handleSubmit}
+        />
+      </Modal>
+
+      {/* Delete Modal */}
+      <ConfirmDeleteModal
+        isOpen={isDeleteOpen}
+        onClose={() => setIsDeleteOpen(false)}
+        onConfirm={confirmDelete}
+        itemName={selectedDoctor?.name}
+      />
+
+    </div>
+  );
+};
+
+export default Doctors;
