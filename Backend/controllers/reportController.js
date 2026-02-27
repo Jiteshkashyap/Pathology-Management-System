@@ -24,17 +24,21 @@ export const updateResultsHandler = async (req, res) => {
       throw new Error("Could not find the full report details for PDF generation.");
     }
    
-    const pdfPath = await generatePDFReport(fullReport)
+    const pdfBuffer = await generatePDFReport(fullReport);
 
-    const channel= getChannel()
-    
-    if(channel){
-        channel.sendToQueue("reportEmailQueue",
-        Buffer.from(JSON.stringify({
-            email:fullReport.patientEmail,
-            pdfPath
-        }))
-    )}
+const channel = getChannel();
+
+if (channel) {
+  channel.sendToQueue(
+    "reportEmailQueue",
+    Buffer.from(
+      JSON.stringify({
+        email: fullReport.patientEmail,
+        pdf: pdfBuffer.toString("base64"), 
+      })
+    )
+  );
+}
 
 
     res.status(200).json({

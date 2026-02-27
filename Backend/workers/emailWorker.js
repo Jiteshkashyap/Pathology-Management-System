@@ -22,17 +22,17 @@ export const startEmailWorker= async()=>{
     console.log("📧 Sending email...");
 
     await transporter.sendMail({
-      from: process.env.EMAIL_USER,
-      to: data.email,
-      subject: "Your Diagnostic Report",
-      text: "Please find attached report.",
-      attachments: [
-        {
-          filename: "report.pdf",
-          path: data.pdfPath
-        }
-      ]
-    });
+  from: process.env.EMAIL_USER,
+  to: data.email,
+  subject: "Your Diagnostic Report",
+  text: "Please find attached report.",
+  attachments: [
+    {
+      filename: "report.pdf",
+      content: Buffer.from(data.pdf, "base64"), // ✅ fix
+    },
+  ],
+});
 
     console.log(" Email sent successfully");
 
