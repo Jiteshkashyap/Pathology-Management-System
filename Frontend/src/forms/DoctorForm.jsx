@@ -25,7 +25,10 @@ const DoctorForm = ({ initialData = {}, onSubmit }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    onSubmit(form);
+    onSubmit({
+      ...form,
+      phone:String(form.phone)
+    });
   };
 
   return (
@@ -77,7 +80,7 @@ const DoctorForm = ({ initialData = {}, onSubmit }) => {
       <div>
         <label className="text-sm text-gray-600">Phone Number</label>
         <input
-          type="number"
+          type="text"
           name="phone"
           value={form.phone}
           onChange={handleChange}
