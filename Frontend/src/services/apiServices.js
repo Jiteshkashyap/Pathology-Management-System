@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: "https://pathology-backend-mqzq.onrender.com/", 
+  baseURL: "https://pathology-backend-mqzq.onrender.com", 
   withCredentials: true, // 
   headers: {
     "Content-Type": "application/json",
