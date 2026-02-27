@@ -109,8 +109,8 @@ const Register = () => {
                 required
               >
                 <option value="">Select Role</option>
-                <option value="Admin">Admin</option>
-                <option value="Technician">Technician</option>
+                <option value="admin">Admin</option>
+                <option value="technician">Technician</option>
               </select>
             </div>
 

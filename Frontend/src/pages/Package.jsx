@@ -52,34 +52,39 @@ const Packages = () => {
   
 
   const handleSubmit = async (data) => {
-    const loadingToast = toast.loading(selectedPackage ? "Updating package..." : "Creating package...");
+  const loadingToast = toast.loading(
+    selectedPackage ? "Updating package..." : "Creating package..."
+  );
 
-    try {
-      dispatch(setPackageLoading(true));
+  try {
+    dispatch(setPackageLoading(true));
 
-      if (selectedPackage) {
-        const response = await updatePackages(selectedPackage._id, data);
-        dispatch(updatePackageState(response.data.data));
-        toast.success("Package updated successfully");
-      } else {
-        const response = await createPackages(data);
-
-        dispatch(addPackageState(response.data.data));
-        toast.success("Package created successfully");
-      }
-
-      setIsModalOpen(false);
-      setSelectedPackage(null);
-
-    } catch (err) {
-      dispatch(setPackageError(err.response?.data?.message || "Operation failed"));
-
-      toast.error(err.response?.data?.message || "Operation failed");
-    } finally {
-      dispatch(setPackageLoading(false));
-      toast.dismiss(loadingToast);
+    if (selectedPackage) {
+      await updatePackages(selectedPackage._id, data);
+      toast.success("Package updated successfully");
+    } else {
+      await createPackages(data);
+      toast.success("Package created successfully");
     }
-  };
+
+    // 🔥 IMPORTANT FIX → REFETCH DATA
+    const res = await getPackages();
+    dispatch(setPackages(res.data));
+
+    setIsModalOpen(false);
+    setSelectedPackage(null);
+
+  } catch (err) {
+    dispatch(
+      setPackageError(err.response?.data?.message || "Operation failed")
+    );
+
+    toast.error(err.response?.data?.message || "Operation failed");
+  } finally {
+    dispatch(setPackageLoading(false));
+    toast.dismiss(loadingToast);
+  }
+};
 
   /* ================= DELETE ================= */
 
