@@ -25,6 +25,8 @@ dotenv.config()
 const app= express()
 
 app.use(helmet())
+
+app.set('trust proxy', 1)
 app.use(cors({ origin: "https://pathology-frontend-zx1t.onrender.com",
     credentials: true,}))
 app.use (compression())
