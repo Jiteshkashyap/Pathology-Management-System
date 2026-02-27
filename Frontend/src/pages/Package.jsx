@@ -59,12 +59,12 @@ const Packages = () => {
 
       if (selectedPackage) {
         const response = await updatePackages(selectedPackage._id, data);
-        dispatch(updatePackageState(response.data));
+        dispatch(updatePackageState(response.data.data));
         toast.success("Package updated successfully");
       } else {
         const response = await createPackages(data);
 
-        dispatch(addPackageState(response.data));
+        dispatch(addPackageState(response.data.data));
         toast.success("Package created successfully");
       }
 
