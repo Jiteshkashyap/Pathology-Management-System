@@ -35,13 +35,15 @@ app.use(express.json())
 app.use(express.urlencoded({extended:true}))
 app.use(cookieParser())
 
-app.use(errorHandler)
+
 
 app.use('/api/auth', authRoutes);
 app.use('/api/doctors', doctorRoutes);
 app.use("/api/tests", testRoutes);
 app.use("/api/packages", packageRoutes);
 app.use("/api/reports", reportRoutes);
+
+app.use(errorHandler)
 
 const PORT=process.env.PORT ||5002
 
