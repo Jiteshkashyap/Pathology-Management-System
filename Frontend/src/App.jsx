@@ -1,6 +1,6 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
-import { useEffect, useState } from "react";
+import { useEffect, useState,useRef } from "react";
 
 import DashboardLayout from "./layout/DashboardLayout";
 import Login from "./pages/auth/Login";
@@ -13,6 +13,7 @@ import Reports from "./pages/Report";
 
 import { refreshToken } from "./services/apiServices";
 import { setUser } from "./redux/authSlice";
+import { Toaster } from "react-hot-toast";
 
 /* ================= PROTECTED ROUTE ================= */
 
@@ -41,14 +42,23 @@ const PublicRoute = ({ children }) => {
 function App() {
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(true);
+  const hasCalled = useRef(false)
 
   useEffect(() => {
+    if (hasCalled.current) return; // ✅ STOP multiple calls
+    hasCalled.current = true;
+
+    const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true'
+    if(!isLoggedIn){
+      setLoading(false);
+      return
+    }
     const bootstrapAuth = async () => {
       try {
         const data = await refreshToken();
-        dispatch(setUser(data.user)); // backend must return user
+        dispatch(setUser(data.user));
       } catch (err) {
-        // Not logged in — ignore
+        localStorage.removeItem('isLoggedIn')
       } finally {
         setLoading(false);
       }
@@ -67,6 +77,19 @@ function App() {
 
   return (
     <BrowserRouter>
+    {/* Toast Container */}
+    <Toaster 
+      position="top-right"
+      toastOptions={{
+        duration: 3000,
+        style: {
+          borderRadius: "12px",
+          background: "#1f2937",
+          color: "#fff",
+        },
+      }}
+    />
+
       <Routes>
 
         {/* Public Routes */}

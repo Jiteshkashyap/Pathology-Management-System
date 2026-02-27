@@ -19,6 +19,8 @@ import {
 import Modal from "../components/Modal";
 import ConfirmDeleteModal from "../components/ConfirmDeleteModal";
 import DoctorForm from "../forms/DoctorForm";
+import toast from "react-hot-toast";
+import Loader from "../components/Loader.jsx";
 
 const Doctors = () => {
   const dispatch = useDispatch();
@@ -53,6 +55,7 @@ const Doctors = () => {
   
 
 const handleSubmit = async (formData) => {
+  const loadingToast = toast.loading(selectedDoctor ?'Updating doctor...': "Creating doctor...")
   try {
     dispatch(setDoctorLoading(true));
 
@@ -63,37 +66,49 @@ const handleSubmit = async (formData) => {
       );
 
       dispatch(updateDoctorState(response.data));
+      toast.success("Doctor updated successfully");
+
     } else {
       const response = await createDoctor(formData);
       dispatch(addDoctorState(response.data));
+      toast.success("Doctor created successfully");
     }
 
-    dispatch(setDoctorLoading(false));
-
+    
     setIsModalOpen(false);
     setSelectedDoctor(null);
+
   } catch (err) {
-    dispatch(
-      setDoctorError(
-        err.response?.data?.message || "Operation failed"
-      )
+    toast.error(
+      err.response?.data?.message || "Operation failed"
     );
+  }
+  finally{
+    dispatch(setDoctorLoading(false))
+    toast.dismiss(loadingToast)
   }
 };
 
  
 
   const confirmDelete = async () => {
+    const loadingToast =toast.loading("Deleting")
     try {
+      dispatch(setDoctorLoading(true))
       await deleteDoctor(selectedDoctor._id);
       dispatch(deleteDoctorState(selectedDoctor._id));
       setIsDeleteOpen(false);
+      toast.success("Doctor delted Succesfully")
     } catch (err) {
       dispatch(
         setDoctorError(
           err.response?.data?.message || "Delete failed"
         )
       );
+      toast.error(err.response?.data?.message ||"Delete failed")
+    } finally{
+      dispatch(setDoctorLoading(false));
+      toast.dismiss(loadingToast)
     }
   };
 
@@ -116,9 +131,10 @@ const handleSubmit = async (formData) => {
         </button>
       </div>
 
-      {loading && <p>Loading...</p>}
-      {error && <p className="text-red-500">{error}</p>}
-
+      
+{loading ? (
+  <Loader/>
+):(
       <table className="w-full text-left border-collapse">
         <thead>
     <tr className="border-b bg-gray-50 text-sm text-gray-600">
@@ -161,7 +177,7 @@ const handleSubmit = async (formData) => {
           ))}
         </tbody>
       </table>
-
+)}
       {/* Modal */}
       <Modal
         isOpen={isModalOpen}

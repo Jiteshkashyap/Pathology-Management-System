@@ -25,7 +25,8 @@ const Login = () => {
     };
 
     try {
-      const response = await loginUser(formData);
+      const response = await loginUser(formData)
+      localStorage.setItem('isLoggedIn','true');
 
       // backend should return user data
       dispatch(setUser(response.user));

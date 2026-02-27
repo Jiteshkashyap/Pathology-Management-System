@@ -13,17 +13,38 @@ api.interceptors.response.use(
   async (error) => {
     const originalRequest = error.config;
 
-    if (
-      error.response?.status === 401 &&
-      !originalRequest._retry
-    ) {
+
+    //  No response (network error)
+    if (!error.response) {
+      return Promise.reject(error);
+    }
+
+    //  Skip refresh API (SAFE CHECK)
+    if (originalRequest?.url === "/auth/refresh-token") {
+      return Promise.reject(error);
+    }
+
+    //  Prevent multiple retries
+    if (originalRequest._retry) {
+      return Promise.reject(error);
+    }
+
+    //  ONLY handle 401
+    if (error.response.status === 401) {
       originalRequest._retry = true;
 
       try {
-        await refreshToken();
+        console.log("Calling refresh token...");
+
+        const res = await refreshToken(); 
+        console.log("Refresh success:", res);
+
         return api(originalRequest);
       } catch (err) {
-        console.log("Refresh failed");
+        console.log("Refresh failed:", err?.response?.data);
+
+        window.location.href = "/login";
+        return Promise.reject(err);
       }
     }
 

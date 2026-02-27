@@ -1,7 +1,11 @@
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import Modal from "../components/Modal";
 import ConfirmDeleteModal from "../components/ConfirmDeleteModal";
 import PackageForm from "../forms/PackageForm";
+import Loader from "../components/Loader";
+import toast from "react-hot-toast";
+
 import {
   getPackages,
   createPackages,
@@ -9,50 +13,103 @@ import {
   deletePackages,
 } from "../services/apiServices";
 
+import {
+  setPackages,
+  addPackageState,
+  updatePackageState,
+  deletepackageState,
+  setPackageLoading,
+  setPackageError,
+} from "../redux/packageSlice";
+
 const Packages = () => {
-  const [packages, setPackages] = useState([]);
+  const dispatch = useDispatch();
+  const { packages, loading } = useSelector((state) => state.packages);
+
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
   const [selectedPackage, setSelectedPackage] = useState(null);
 
-  // ✅ Fetch packages
-  const fetchPackages = async () => {
-    try {
-      const res = await getPackages();
-      setPackages(res.data); // adjust if needed (res.data.data)
-    } catch (err) {
-      console.log(err);
-    }
-  };
+  
 
   useEffect(() => {
-    fetchPackages();
-  }, []);
+    const fetchPackages = async () => {
+      try {
+        dispatch(setPackageLoading(true));
 
-  // ✅ Create / Update
+        const res = await getPackages();
+
+        dispatch(setPackages(res.data));
+      } catch (err) {
+        dispatch(setPackageError(err.response?.data?.message || "Failed to fetch packages"));
+       toast.error(err.response?.data?.message || "Failed to fetch packages");
+      }
+    };
+
+    fetchPackages();
+  }, [dispatch]);
+
+  
+
   const handleSubmit = async (data) => {
+    const loadingToast = toast.loading(selectedPackage ? "Updating package..." : "Creating package...");
+
     try {
+      dispatch(setPackageLoading(true));
+
       if (selectedPackage) {
-        await updatePackages(selectedPackage._id, data);
+        const response = await updatePackages(selectedPackage._id, data);
+        dispatch(updatePackageState(response.data));
+        toast.success("Package updated successfully");
       } else {
-        await createPackages(data);
+        const response = await createPackages(data);
+
+        dispatch(addPackageState(response.data));
+        toast.success("Package created successfully");
       }
 
-      fetchPackages(); // refresh list
       setIsModalOpen(false);
+      setSelectedPackage(null);
+
     } catch (err) {
-      console.log(err);
+      dispatch(setPackageError(err.response?.data?.message || "Operation failed"));
+
+      toast.error(err.response?.data?.message || "Operation failed");
+    } finally {
+      dispatch(setPackageLoading(false));
+      toast.dismiss(loadingToast);
     }
   };
 
-  // ✅ Delete
+  /* ================= DELETE ================= */
+
   const handleDelete = async () => {
+    const loadingToast = toast.loading("Deleting package...");
+
     try {
+      dispatch(setPackageLoading(true));
+
       await deletePackages(selectedPackage._id);
-      fetchPackages();
+
+      dispatch(deletepackageState(selectedPackage._id));
+
+      toast.success("Package deleted successfully");
+
       setIsDeleteOpen(false);
+
     } catch (err) {
-      console.log(err);
+      dispatch(
+        setPackageError(
+          err.response?.data?.message || "Delete failed"
+        )
+      );
+
+      toast.error(
+        err.response?.data?.message || "Delete failed"
+      );
+    } finally {
+      dispatch(setPackageLoading(false));
+      toast.dismiss(loadingToast);
     }
   };
 
@@ -75,72 +132,66 @@ const Packages = () => {
         </button>
       </div>
 
-      <table className="w-full text-left">
-        <thead>
-          <tr className="border-b text-sm text-gray-600">
-            <th className="py-2">Name</th>
-            <th>Tests</th>
-            <th>Discount</th>
-            <th>Total Price</th>
-            <th>Final Price</th>
-            <th className="text-right">Actions</th>
-          </tr>
-        </thead>
-
-        <tbody>
-          {packages.map((pkg) => (
-            <tr key={pkg._id || pkg.id} className="border-b">
-              
-              {/* Name */}
-              <td className="py-3">{pkg.name}</td>
-
-              {/* Tests */}
-              <td className="text-sm">
-                {pkg.testDetails?.length > 0
-                  ? pkg.testDetails.map((t) => t.name).join(", ")
-                  : "No tests"}
-              </td>
-
-              {/* Discount */}
-              <td>{pkg.discountPercentage || pkg.discount}%</td>
-
-              {/* Total Price */}
-              <td>₹{pkg.totalPrice || 0}</td>
-
-              {/* Final Price */}
-              <td className="font-semibold text-green-600">
-                ₹{pkg.discountedPrice || 0}
-              </td>
-
-              {/* Actions */}
-              <td className="text-right space-x-3">
-                <button
-                  onClick={() => {
-                    setSelectedPackage(pkg);
-                    setIsModalOpen(true);
-                  }}
-                  className="text-blue-600 text-sm"
-                >
-                  Edit
-                </button>
-
-                <button
-                  onClick={() => {
-                    setSelectedPackage(pkg);
-                    setIsDeleteOpen(true);
-                  }}
-                  className="text-red-600 text-sm"
-                >
-                  Delete
-                </button>
-              </td>
-
+      {loading ? (
+        <Loader />
+      ) : (
+        <table className="w-full text-left">
+          <thead>
+            <tr className="border-b text-sm text-gray-600">
+              <th className="py-2">Name</th>
+              <th>Tests</th>
+              <th>Discount</th>
+              <th>Total Price</th>
+              <th>Final Price</th>
+              <th className="text-right">Actions</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
 
-      {/* Modal */}
+          <tbody>
+            {packages.map((pkg) => (
+              <tr key={pkg._id} className="border-b">
+                <td className="py-3">{pkg.name}</td>
+
+                <td className="text-sm">
+                  {pkg.testDetails?.length > 0
+                    ? pkg.testDetails.map((t) => t.name).join(", ")
+                    : "No tests"}
+                </td>
+
+                <td>{pkg.discountPercentage}%</td>
+                <td>₹{pkg.totalPrice || 0}</td>
+
+                <td className="font-semibold text-green-600">
+                  ₹{pkg.discountedPrice || 0}
+                </td>
+
+                <td className="text-right space-x-3">
+                  <button
+                    onClick={() => {
+                      setSelectedPackage(pkg);
+                      setIsModalOpen(true);
+                    }}
+                    className="text-blue-600 text-sm"
+                  >
+                    Edit
+                  </button>
+
+                  <button
+                    onClick={() => {
+                      setSelectedPackage(pkg);
+                      setIsDeleteOpen(true);
+                    }}
+                    className="text-red-600 text-sm"
+                  >
+                    Delete
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      )}
+
       <Modal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
@@ -152,14 +203,12 @@ const Packages = () => {
         />
       </Modal>
 
-      {/* Delete Modal */}
       <ConfirmDeleteModal
         isOpen={isDeleteOpen}
         onClose={() => setIsDeleteOpen(false)}
         onConfirm={handleDelete}
         itemName={selectedPackage?.name}
       />
-
     </div>
   );
 };

@@ -19,6 +19,8 @@ import {
  deleteTests,
  updateTests
 } from "../services/apiServices";
+import toast from "react-hot-toast";
+import Loader from "../components/Loader";
 
 const Tests = () => {
   const dispatch = useDispatch()
@@ -46,47 +48,62 @@ const Tests = () => {
   },[dispatch])
    
 
-  const handleSubmit =async(formData)=>{
-    try {
-      dispatch(setTestLoading(true));
-      if(selectedTest){
-        const response = await updateTests(
-          selectedTest._id,
-          formData
-        );
-        dispatch(updateTestState(response.data))
-      }else{
-        const response = await createTests(formData);
-        dispatch(addTestState(response.data))
-      }
-      
-      dispatch(setTestLoading(false));
+  const handleSubmit = async (formData) => {
+  const loadingToast = toast.loading(
+    selectedTest ? "Updating test..." : "Creating test..."
+  );
 
-      setIsModalOpen(false);
-      setSelectedTest(null)
-    } catch (err) {
-      dispatch(
-        setTestError(
-          err.response?.data?.message || "Unable to add"
-        )
-      )
+  try {
+    dispatch(setTestLoading(true))
+    if (selectedTest) {
+      const response = await updateTests(
+        selectedTest._id,
+        formData
+      );
+      dispatch(updateTestState(response.data));
+      toast.success("Test updated successfully");
+    } else {
+      const response = await createTests(formData);
+      dispatch(addTestState(response.data));
+      toast.success("Test created successfully");
     }
-  };
+
+    setIsModalOpen(false);
+    setSelectedTest(null);
+  } catch (err) {
+    toast.error(
+      err.response?.data?.message || "Operation failed"
+    );
+  } finally {
+    dispatch(setTestLoading(false))
+    toast.dismiss(loadingToast);
+  }
+};
+
+const confirmDelete = async () => {
+  const loadingToast = toast.loading("Deleting test...");
+
+  try {
+    dispatch(setTestLoading(true))
+
+    await deleteTests(selectedTest._id);
+
+    dispatch(deleteTestState(selectedTest._id));
+
+    toast.success("Test deleted successfully");
+    setIsDeleteOpen(false);
+  } catch (err) {
+    toast.error(
+      err.response?.data?.message || "Delete failed"
+    );
+  } finally {
+    dispatch(setTestLoading(false))
+    toast.dismiss(loadingToast);
+  }
+};
    
 
-  const confirmDelete = async()=>{
-    try {
-      await deleteTests(selectedTest._id);
-      dispatch(deleteTestState(selectedTest._id))
-      setIsDeleteOpen(false)
-    } catch (err) {
-      dispatch(
-        setTestError(
-          err.response?.data.message || 'Delete Failed'
-        )
-      )
-    }
-  }
+ 
 
   return (
     <div className="bg-white p-6 rounded-2xl shadow-md">
@@ -104,9 +121,9 @@ const Tests = () => {
           + Add Test
         </button>
       </div>
-      {loading && <p>Loading...</p>}
-      {error && <p className="text-red-500">{error}</p>}
-
+    {loading ? (
+      <Loader/>
+    ):(
       <table className="w-full text-left border-collapse">
   <thead>
     <tr className="border-b bg-gray-50 text-sm text-gray-600">
@@ -161,7 +178,9 @@ const Tests = () => {
       </tr>
     ))}
   </tbody>
-</table>
+       </table>
+    )
+}
 
       <Modal
         isOpen={isModalOpen}

@@ -13,6 +13,7 @@ const DashboardLayout = () => {
   const handleLogout = async () => {
     try {
       await logoutUser();
+      localStorage.removeItem('isLoggedIn')
       dispatch(logoutUserState());
       navigate("/login");
     } catch (error) {

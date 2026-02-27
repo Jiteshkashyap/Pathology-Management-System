@@ -8,6 +8,7 @@ import {
   getDoctors,
   getTests,
 } from "../services/apiServices";
+import toast from "react-hot-toast";
 
 const Reports = () => {
   const [reports, setReports] = useState([]);
@@ -53,17 +54,28 @@ const Reports = () => {
   
 
   const handleUpdateResults = async (formData) => {
-    try {
-      await updateReportResults(
-        selectedReport._id,
-        formData
-      );
-      setIsModalOpen(false);
-      fetchAll();
-    } catch (error) {
-      console.error("Update failed:", error);
-    }
-  };
+  const loadingToast = toast.loading("Updating results...");
+
+  try {
+    await updateReportResults(
+      selectedReport._id,
+      formData
+    );
+
+    toast.success("Results updated & email queued");
+
+    setIsModalOpen(false);
+    setSelectedReport(null);
+    fetchAll();
+
+  } catch (error) {
+    toast.error(
+      error.response?.data?.message || "Update failed"
+    );
+  } finally {
+    toast.dismiss(loadingToast);
+  }
+};
 
   return (
     <div className="bg-white p-6 rounded-2xl shadow-md">
