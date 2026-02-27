@@ -35,7 +35,7 @@ const Register = () => {
       dispatch(setLoading(false));
 
       // redirect to dashboard
-      navigate("/");
+      navigate("/login");
     } catch (err) {
       dispatch(
         setError(err.response?.data?.message || "Registration failed")
