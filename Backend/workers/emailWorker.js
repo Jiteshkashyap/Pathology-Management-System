@@ -29,7 +29,9 @@ export const startEmailWorker= async()=>{
   attachments: [
     {
       filename: "report.pdf",
-      content: Buffer.from(data.pdf, "base64"), // ✅ fix
+      content: Buffer.from(data.pdf, "base64"), 
+      encoding: "base64", 
+      contentType: "application/pdf", 
     },
   ],
 });

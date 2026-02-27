@@ -4,16 +4,19 @@ export const generatePDFReport = (report) => {
   return new Promise((resolve, reject) => {
     const doc = new PDFDocument({ margin: 50 });
 
-    const buffers = [];
+    const chunks = [];
 
-    doc.on("data", buffers.push.bind(buffers));
+    doc.on("data", (chunk) => chunks.push(chunk));
+
     doc.on("end", () => {
-      const pdfBuffer = Buffer.concat(buffers);
-      resolve(pdfBuffer); //  return buffer
+      const pdfBuffer = Buffer.concat(chunks);
+      resolve(pdfBuffer);
     });
 
-    // --- YOUR SAME DESIGN (NO CHANGE) ---
-    doc.fontSize(22).text("DIAGNOSTIC REPORT", { align: "center" });
+    doc.on("error", reject);
+
+    // --- CONTENT ---
+    doc.fontSize(20).text("Diagnostic Report", { align: "center" });
     doc.moveDown();
 
     doc.text(`Patient: ${report.patientName}`);
@@ -24,7 +27,6 @@ export const generatePDFReport = (report) => {
       doc.text(`${t.name} - ${t.result}`);
     });
 
-    // Barcode (same as your logic)
     if (report.barcode) {
       const cleanBase64 = report.barcode.replace(/^data:image\/\w+;base64,/, "");
       doc.image(Buffer.from(cleanBase64, "base64"), {
@@ -32,6 +34,6 @@ export const generatePDFReport = (report) => {
       });
     }
 
-    doc.end();
+    doc.end(); // ✅ VERY IMPORTANT
   });
 };
