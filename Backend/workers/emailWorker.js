@@ -12,15 +12,12 @@ export const startEmailWorker= async()=>{
     console.log("Email data:", data);
 
     const transporter = nodemailer.createTransport({
-       host: "smtp.gmail.com",
-       port: 587,
-       secure: false,
-       family: 4,
-       auth: {
-         user: process.env.EMAIL_USER,
-         pass: process.env.EMAIL_PASS,
-  },
-});
+      service: "gmail",
+      auth: {
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS
+      }
+    });
 
     console.log("📧 Sending email...");
 
@@ -33,8 +30,8 @@ export const startEmailWorker= async()=>{
     {
       filename: "report.pdf",
       content: Buffer.from(data.pdf, "base64"), 
-      encoding: "base64", 
-      contentType: "application/pdf", 
+      encoding: "base64", // ✅ ADD THIS
+      contentType: "application/pdf", // ✅ ADD THIS
     },
   ],
 });
