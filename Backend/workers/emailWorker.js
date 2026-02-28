@@ -12,8 +12,7 @@ export const startEmailWorker= async()=>{
     console.log("Email data:", data);
 
     const transporter = nodemailer.createTransport({
-      service:'gmail',
-    host: "smtp.gmail.com",
+   host: "smtp.gmail.com",
    port: 587,
    secure: false,
    auth: {
