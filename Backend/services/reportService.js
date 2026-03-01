@@ -144,12 +144,22 @@ export const getFullReport = async (reportId) => {
   return result[0];
 };
 
-export const getReports = async () => {
-  const page =  1;
-  const limit = 10;
+export const getReports = async ({ page = 1, limit = 10 }) => {
   const skip = (page - 1) * limit;
-  return await ReportModel.find().skip(skip).limit(limit)
+
+  const data = await ReportModel.find()
+    .skip(skip)
+    .limit(limit)
     .populate("doctor", "name specialization")
     .populate("tests.test", "name category unit normalRange")
     .sort({ createdAt: -1 });
+
+  const total = await ReportModel.countDocuments();
+
+  return {
+    data,
+    total,
+    page,
+    totalPages: Math.ceil(total / limit),
+  };
 };
