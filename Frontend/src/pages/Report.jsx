@@ -32,7 +32,7 @@ const Reports = () => {
         getTests(),
       ]);
 
-      setReports(reportRes.data);
+      setReports(reportRes.data.data.data);
       setDoctors(doctorRes.data);
       setTests(testRes.data);
     } catch (error) {
