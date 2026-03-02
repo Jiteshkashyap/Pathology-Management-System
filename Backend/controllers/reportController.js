@@ -63,8 +63,7 @@ export const getReportsHandler = async (req, res) => {
 
     return res.status(200).json({
       success: true,
-      count: reports.data.length,
-      data: reports,
+     ...reports,
     });
 
   } catch (error) {

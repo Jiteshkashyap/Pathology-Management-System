@@ -6,9 +6,9 @@ export const createDoctor=async(data)=>{
 
 export const getDoctors=async({page , limit , specialization})=>{
     const query={}
-    if(specialization ){
-        query.specialization = specialization
-    }
+    if (specialization) {
+    query.specialization = {$regex: specialization,
+                            $options: "i",}}
 
     const skip=(page-1)*limit
 

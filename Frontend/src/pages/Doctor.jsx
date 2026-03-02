@@ -67,8 +67,6 @@ const Doctors = () => {
 };
 
   useEffect(() => {
-   
-
     fetchAllDoctors();
   }, [dispatch,page,debouncedSpecialization]);
 
@@ -158,19 +156,16 @@ const handleSubmit = async (formData) => {
         </button>
       </div>
 
-      <select
-  value={specialization}
-  onChange={(e) => {
-    setSpecialization(e.target.value);
-    setPage(1);
-  }}
-  className="border px-3 py-2 rounded-lg mb-4"
->
-  <option value="">All Specializations</option>
-  <option value="Cardiologist">Cardiologist</option>
-  <option value="Neurologist">Neurologist</option>
-  <option value="Dermatologist">Dermatologist</option>
-</select>
+         <input
+           type="text"
+           placeholder="Search by specialization..."
+           value={specialization}
+           onChange={(e) => {
+           setSpecialization(e.target.value);
+           dispatch(setPage(1));
+           }}
+          className="border px-3 py-2 rounded-lg mb-4 w-full"
+         />
 {loading ? (
   <Loader/>
 ):(
@@ -186,7 +181,14 @@ const handleSubmit = async (formData) => {
     </tr>
   </thead>
         <tbody>
-          {doctors.map((doc) => (
+          {doctors.length === 0 ? (
+             <tr>
+               <td colSpan="5" className="text-center py-4">
+                    No doctors found
+                 </td>
+              </tr>
+               ) : (
+          doctors.map((doc) => (
             <tr key={doc._id} className="border-b">
               <td className="py-3">{doc.name}</td>
               <td>{doc.email}</td>
@@ -214,7 +216,8 @@ const handleSubmit = async (formData) => {
                 </button>
               </td>
             </tr>
-          ))}
+          )))
+        }
         </tbody>
       </table>
       </div>
