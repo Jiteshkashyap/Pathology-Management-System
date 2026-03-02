@@ -38,6 +38,8 @@ const fetchAll = async () => {
   useEffect(() => {
     fetchAll();
     console.log(reports)
+    console.log(doctors)
+    console.log(tests)
   }, []);
 
   
