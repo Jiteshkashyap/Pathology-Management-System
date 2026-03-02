@@ -9,43 +9,36 @@ import {
   getTests,
 } from "../services/apiServices";
 import toast from "react-hot-toast";
-import Pagination from "../components/Pagination";
 
 const Reports = () => {
-  
+  const [reports, setReports] = useState([]);
   const [doctors, setDoctors] = useState([]);
   const [tests, setTests] = useState([]);
-  const [currentPage , setCurrentPage]= useState(1)
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedReport, setSelectedReport] = useState(null);
   const [mode, setMode] = useState("create");
-  const [reports, setReports] = useState({ data: [], page: 1, totalPages: 1 });
 
 
   useEffect(() => {
     fetchAll();
   }, []);
 
-  
-
   const fetchAll = async () => {
-  try {
-    const reportRes = await getReports(page); 
-      const [doctorRes, testRes] = await Promise.all([
+    try {
+      const [reportRes, doctorRes, testRes] = await Promise.all([
+        getReports(),
         getDoctors(),
         getTests(),
       ]);
 
-    setReports(reportRes);   
-    setDoctors(doctorRes.data ||doctorRes || []);
-    setTests(testRes.data ||testRes || []);
-      
-  } catch (error) {
-    console.error("Error loading data:", error);
-    toast.error("Failed to load data");
-  }
-};
+      setReports(reportRes.data);
+      setDoctors(doctorRes.data);
+      setTests(testRes.data);
+    } catch (error) {
+      console.error("Error loading data:", error);
+    }
+  };
 
 
   const handleCreate = async (formData) => {
@@ -83,9 +76,6 @@ const Reports = () => {
     toast.dismiss(loadingToast);
   }
 };
-useEffect(() => {
-  fetchAll(currentPage);
-}, [currentPage]);
 
   return (
     <div className="bg-white p-6 rounded-2xl shadow-md">
@@ -118,7 +108,7 @@ useEffect(() => {
         </thead>
 
         <tbody>
-          {reports.data && reports.data?.map((report) => (
+          {reports.map((report) => (
             <tr key={report._id} className="border-b">
               <td className="py-3 px-2">
                 {report.patientName}
@@ -166,12 +156,6 @@ useEffect(() => {
           }
         />
       </Modal>
-
-      <Pagination
-     page={reports.page}
-     totalPages={reports.totalPages}
-     onPageChange={(p)=>setCurrentPage(p)}
-/>
     </div>
   );
 };

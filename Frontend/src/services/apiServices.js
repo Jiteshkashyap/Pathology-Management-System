@@ -146,10 +146,8 @@ export const deletePackages =async(id)=>{
 
 
 
-export const getReports = async (page=1 , limit=10) => {
-  const response = await api.get("/reports",{
-    params:{page , limit}
-  });
+export const getReports = async () => {
+  const response = await api.get("/reports");
   return response.data;
 };
 
