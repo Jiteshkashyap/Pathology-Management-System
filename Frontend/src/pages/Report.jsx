@@ -35,6 +35,9 @@ const Reports = () => {
       setReports(reportRes.data.data);
       setDoctors(doctorRes.data.data);
       setTests(testRes.data.data);
+      console.log("Reports:", reportRes.data);
+console.log("Doctors:", doctorRes.data);
+console.log("Tests:", testRes.data);
     } catch (error) {
       console.error("Error loading data:", error);
     }
