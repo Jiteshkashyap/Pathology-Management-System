@@ -11,13 +11,14 @@ import {
 import toast from "react-hot-toast";
 
 const Reports = () => {
-  const [reports, setReports] = useState([]);
+  
   const [doctors, setDoctors] = useState([]);
   const [tests, setTests] = useState([]);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedReport, setSelectedReport] = useState(null);
   const [mode, setMode] = useState("create");
+  const [reports, setReports] = useState({ data: [], page: 1, totalPages: 1 });
 
 
   useEffect(() => {
@@ -25,23 +26,27 @@ const Reports = () => {
   }, []);
 
   const fetchAll = async () => {
-    try {
-      const [reportRes, doctorRes, testRes] = await Promise.all([
-        getReports(),
-        getDoctors(),
-        getTests(),
-      ]);
+  try {
+    const [reportRes, doctorRes, testRes] = await Promise.all([
+      getReports(),
+      getDoctors(),
+      getTests(),
+    ]);
 
-      setReports(reportRes.data.data);
-      setDoctors(doctorRes.data.data);
-      setTests(testRes.data.data);
-      console.log("Reports:", reportRes.data);
-console.log("Doctors:", doctorRes.data);
-console.log("Tests:", testRes.data);
-    } catch (error) {
-      console.error("Error loading data:", error);
-    }
-  };
+    
+    console.log("Reports API Full Response:", reportRes.data);
+
+    
+    setReports(reportRes.data); 
+    
+    setDoctors(doctorRes.data.data || []);
+    setTests(testRes.data.data || []);
+      
+  } catch (error) {
+    console.error("Error loading data:", error);
+    toast.error("Failed to load data");
+  }
+};
 
 
   const handleCreate = async (formData) => {
@@ -111,7 +116,7 @@ console.log("Tests:", testRes.data);
         </thead>
 
         <tbody>
-          {reports.map((report) => (
+          {reports.data?.map((report) => (
             <tr key={report._id} className="border-b">
               <td className="py-3 px-2">
                 {report.patientName}
