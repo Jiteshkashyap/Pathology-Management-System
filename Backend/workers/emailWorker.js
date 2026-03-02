@@ -101,7 +101,7 @@ export const startEmailWorker = async () => {
     } catch (error) {
       console.error(" Email failed:", error.message);
       
-      d
+      
       channel.nack(msg, false, false); 
     }
   });
