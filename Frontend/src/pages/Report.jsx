@@ -28,7 +28,7 @@ const Reports = () => {
     try {
       const [reportRes, doctorRes, testRes] = await Promise.all([
         getReports(),
-        getDoctors(),
+        getDoctors({page:1 , limit:1000}),
         getTests(),
       ]);
 
