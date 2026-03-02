@@ -168,8 +168,8 @@ useEffect(() => {
       </Modal>
 
       <Pagination
-     page={page}
-     totalPages={totalPages}
+     page={reports.page}
+     totalPages={reports.totalPages}
      onPageChange={(p)=>setCurrentPage(p)}
 />
     </div>
