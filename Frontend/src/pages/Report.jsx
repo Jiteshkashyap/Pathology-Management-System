@@ -27,7 +27,7 @@ const fetchAll = async () => {
         getTests(),
       ]);
 
-      setReports(reportRes.data.data.data);
+      setReports(reportRes.data.data);
       setDoctors(doctorRes.data);
       setTests(testRes.data);
     } catch (error) {
