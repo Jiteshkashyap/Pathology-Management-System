@@ -19,12 +19,7 @@ const Reports = () => {
   const [selectedReport, setSelectedReport] = useState(null);
   const [mode, setMode] = useState("create");
 
-
-  useEffect(() => {
-    fetchAll();
-  }, []);
-
-  const fetchAll = async () => {
+const fetchAll = async () => {
     try {
       const [reportRes, doctorRes, testRes] = await Promise.all([
         getReports(),
@@ -39,6 +34,13 @@ const Reports = () => {
       console.error("Error loading data:", error);
     }
   };
+
+  useEffect(() => {
+    fetchAll();
+    console.log(reports)
+  }, []);
+
+  
 
 
   const handleCreate = async (formData) => {
