@@ -124,7 +124,8 @@ const confirmDelete = async () => {
     {loading ? (
       <Loader/>
     ):(
-      <table className="w-full text-left border-collapse">
+      <div className="overflow-x-auto">
+      <table className="w-full text-left border-collapse min-w-[700px]">
   <thead>
     <tr className="border-b bg-gray-50 text-sm text-gray-600">
       <th className="py-3 px-2">Name</th>
@@ -179,6 +180,7 @@ const confirmDelete = async () => {
     ))}
   </tbody>
        </table>
+       </div>
     )
 }
 

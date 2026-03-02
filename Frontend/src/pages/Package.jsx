@@ -140,7 +140,8 @@ const Packages = () => {
       {loading ? (
         <Loader />
       ) : (
-        <table className="w-full text-left">
+        <div className="overflow-x-auto">
+        <table className="w-full text-left border-collapse min-w-[700px]">
           <thead>
             <tr className="border-b text-sm text-gray-600">
               <th className="py-2">Name</th>
@@ -195,6 +196,7 @@ const Packages = () => {
             ))}
           </tbody>
         </table>
+        </div>
       )}
 
       <Modal
