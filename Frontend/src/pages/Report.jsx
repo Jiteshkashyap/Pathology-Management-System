@@ -9,11 +9,13 @@ import {
   getTests,
 } from "../services/apiServices";
 import toast from "react-hot-toast";
+import Pagination from "../components/Pagination";
 
 const Reports = () => {
   
   const [doctors, setDoctors] = useState([]);
   const [tests, setTests] = useState([]);
+  const [currentPage , setCurrentPage]= useState(1)
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedReport, setSelectedReport] = useState(null);
@@ -25,22 +27,19 @@ const Reports = () => {
     fetchAll();
   }, []);
 
+  
+
   const fetchAll = async () => {
   try {
-    const [reportRes, doctorRes, testRes] = await Promise.all([
-      getReports(),
-      getDoctors(),
-      getTests(),
-    ]);
+    const reportRes = await getReports(page); 
+      const [doctorRes, testRes] = await Promise.all([
+        getDoctors(),
+        getTests(),
+      ]);
 
-    
-    console.log("Reports API Full Response:", reportRes.data);
-
-    
-    setReports(reportRes.data); 
-    
-    setDoctors(doctorRes.data.data || []);
-    setTests(testRes.data.data || []);
+    setReports(reportRes);   
+    setDoctors(doctorRes.data ||doctorRes || []);
+    setTests(testRes.data ||testRes || []);
       
   } catch (error) {
     console.error("Error loading data:", error);
@@ -84,6 +83,9 @@ const Reports = () => {
     toast.dismiss(loadingToast);
   }
 };
+useEffect(() => {
+  fetchAll(currentPage);
+}, [currentPage]);
 
   return (
     <div className="bg-white p-6 rounded-2xl shadow-md">
@@ -116,7 +118,7 @@ const Reports = () => {
         </thead>
 
         <tbody>
-          {reports.data?.map((report) => (
+          {reports.data && reports.data?.map((report) => (
             <tr key={report._id} className="border-b">
               <td className="py-3 px-2">
                 {report.patientName}
@@ -164,6 +166,12 @@ const Reports = () => {
           }
         />
       </Modal>
+
+      <Pagination
+     page={page}
+     totalPages={totalPages}
+     onPageChange={(p)=>setCurrentPage(p)}
+/>
     </div>
   );
 };
