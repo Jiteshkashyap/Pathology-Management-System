@@ -14,6 +14,8 @@ import {
   deleteDoctorState,
   setDoctorLoading,
   setDoctorError,
+  setPage,
+  setPagination
 } from "../redux/doctorSlice";
 
 import Modal from "../components/Modal";
@@ -21,37 +23,62 @@ import ConfirmDeleteModal from "../components/ConfirmDeleteModal";
 import DoctorForm from "../forms/DoctorForm";
 import toast from "react-hot-toast";
 import Loader from "../components/Loader.jsx";
+import Pagination from "../components/Pagination.jsx";
 
 const Doctors = () => {
   const dispatch = useDispatch();
-  const { doctors, loading, error } = useSelector(
+  const { doctors, loading, error, page,totalPages} = useSelector(
     (state) => state.doctors
   );
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
   const [selectedDoctor, setSelectedDoctor] = useState(null);
-
+  const [limit]= useState(5)
+  const [specialization ,setSpecialization]=useState('')
+  const [debouncedSpecialization, setDebouncedSpecialization] = useState("");
   
 
+  const fetchAllDoctors = async () => {
+  try {
+    dispatch(setDoctorLoading(true));
+
+    const data = await getDoctors({
+      page,
+      limit,
+      specialization: debouncedSpecialization,
+    });
+
+    dispatch(setDoctors(data.data));
+    dispatch(
+    setPagination({
+    page: data.page,
+    totalPages: data.totalPages,
+  })
+);
+
+  } catch (err) {
+    dispatch(
+      setDoctorError(
+        err.response?.data?.message || "Failed to fetch doctors"
+      )
+    );
+  }
+};
+
   useEffect(() => {
-    const fetchAllDoctors = async () => {
-      try {
-        dispatch(setDoctorLoading(true));
-        const data = await getDoctors();
-        dispatch(setDoctors(data.data));
-      } catch (err) {
-        dispatch(
-          setDoctorError(
-            err.response?.data?.message || "Failed to fetch doctors"
-          )
-        );
-      }
-    };
+   
 
     fetchAllDoctors();
-  }, [dispatch]);
+  }, [dispatch,page,debouncedSpecialization]);
 
+  useEffect(() => {
+  const timer = setTimeout(() => {
+    setDebouncedSpecialization(specialization);
+  }, 500); 
+
+  return () => clearTimeout(timer);
+}, [specialization]);
   
 
 const handleSubmit = async (formData) => {
@@ -131,11 +158,24 @@ const handleSubmit = async (formData) => {
         </button>
       </div>
 
-      
+      <select
+  value={specialization}
+  onChange={(e) => {
+    setSpecialization(e.target.value);
+    setPage(1);
+  }}
+  className="border px-3 py-2 rounded-lg mb-4"
+>
+  <option value="">All Specializations</option>
+  <option value="Cardiologist">Cardiologist</option>
+  <option value="Neurologist">Neurologist</option>
+  <option value="Dermatologist">Dermatologist</option>
+</select>
 {loading ? (
   <Loader/>
 ):(
-      <table className="w-full text-left border-collapse">
+     <div className="overflow-x-auto">
+      <table className="w-full text-left border-collapse min-w-[700px]">
         <thead>
     <tr className="border-b bg-gray-50 text-sm text-gray-600">
       <th className="py-3 px-2">Name</th>
@@ -177,6 +217,7 @@ const handleSubmit = async (formData) => {
           ))}
         </tbody>
       </table>
+      </div>
 )}
       {/* Modal */}
       <Modal
@@ -197,6 +238,12 @@ const handleSubmit = async (formData) => {
         onConfirm={confirmDelete}
         itemName={selectedDoctor?.name}
       />
+
+      <Pagination
+  page={page}
+  totalPages={totalPages}
+  onPageChange={(p)=>dispatch(setPage(p))}
+/>
 
     </div>
   );

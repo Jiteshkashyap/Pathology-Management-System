@@ -80,8 +80,10 @@ export const logoutUser = async () => {
 
 
 
-export const getDoctors = async () => {
-  const response = await api.get("/doctors");
+export const getDoctors = async ({ page, limit, specialization }) => {
+  const response = await api.get("/doctors", {
+    params: { page, limit, specialization },
+  });
   return response.data;
 };
 

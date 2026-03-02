@@ -6,6 +6,8 @@ const doctorSlice = createSlice({
     doctors: [],
     loading: false,
     error: null,
+    page:1,
+    totalPages:1
   },
   reducers: {
     setDoctors: (state, action) => {
@@ -38,6 +40,14 @@ const doctorSlice = createSlice({
       state.error = action.payload;
       state.loading = false;
     },
+    setPagination: (state, action) => {
+  state.page = action.payload.page;
+  state.totalPages = action.payload.totalPages;
+},
+
+setPage: (state, action) => {
+  state.page = action.payload;
+},
   },
 });
 
@@ -48,6 +58,8 @@ export const {
   deleteDoctorState,
   setDoctorLoading,
   setDoctorError,
+  setPagination,
+  setPage
 } = doctorSlice.actions;
 
 export default doctorSlice.reducer;

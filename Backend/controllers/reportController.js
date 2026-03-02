@@ -54,11 +54,16 @@ if (channel) {
 
 export const getReportsHandler = async (req, res) => {
   try {
-    const reports = await getReports();
+
+    const {page=1 , limit=10}= req.query
+    const reports = await getReports({
+      page:Number(page),
+      limit:Number(limit)
+    });
 
     return res.status(200).json({
       success: true,
-      count: reports.length,
+      count: reports.data.length,
       data: reports,
     });
 

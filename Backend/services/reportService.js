@@ -144,7 +144,7 @@ export const getFullReport = async (reportId) => {
   return result[0];
 };
 
-export const getReports = async ({ page = 1, limit = 10 }) => {
+export const getReports = async ({ page = 1, limit = 10 }={}) => {
   const skip = (page - 1) * limit;
 
   const data = await ReportModel.find()
