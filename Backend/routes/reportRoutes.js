@@ -2,7 +2,9 @@ import express from "express";
 import {
   createReportHandler,
   updateResultsHandler,
-  getReportsHandler
+  getReportsHandler,
+  getReportDownloadUrl,
+  getMyReportsHandler
 } from "../controllers/reportController.js";
 import { validateSchema } from "../middleware/validateMiddleware.js";
 import { createReportSchema, updateResultsSchema } from "../validation/reportValidation.js";
@@ -30,6 +32,20 @@ router.get(
   authMiddleware,
   authorizeRoles("admin", "technician"),
   getReportsHandler
+);
+
+router.get(
+  "/:id/download",
+  authMiddleware,
+  authorizeRoles("admin", "technician", "patient"),
+  getReportDownloadUrl
+);
+
+router.get(
+  "/my",
+  authMiddleware,
+  authorizeRoles("patient"),
+  getMyReportsHandler
 );
 
 export default router;

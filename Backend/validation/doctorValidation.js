@@ -9,7 +9,11 @@ export const createDoctorSchema = Joi.object({
     .pattern(/^[0-9]+$/)
     .messages({
       'string.length': 'Phone number must be exactly 10 digits.',
-      'string.pattern.base': 'Phone number must only contain digits.'}).optional()
+      'string.pattern.base': 'Phone number must only contain digits.'}).optional(),
+      experience: Joi.string().min(0).optional(),
+      description: Joi.string().optional(),
+      image: Joi.any().optional() 
+
 
 });
 
@@ -23,5 +27,8 @@ export const updateDoctorSchema = Joi.object({
     .messages({
       'string.length': 'Phone number must be exactly 10 digits.',
       'string.pattern.base': 'Phone number must only contain digits.'}).optional(),
+  experience: Joi.string().min(0).optional(),
+  description: Joi.string().optional(),
+  image: Joi.any().optional() ,
   isActive: Joi.boolean().optional(),
 });

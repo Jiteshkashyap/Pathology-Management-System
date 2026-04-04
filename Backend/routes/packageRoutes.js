@@ -9,7 +9,7 @@ import { rateLimiter } from "../middleware/rateLimiter.js";
 const router = express.Router();
 
 router.post("/",authMiddleware,authorizeRoles("admin"),validateSchema(createPackageSchema),createPackageHandler);
-router.get("/",rateLimiter,authMiddleware,authorizeRoles("admin", "technician"),getPackagesHandler);
+router.get("/",rateLimiter,authMiddleware,authorizeRoles("admin","patient" ,"technician"),getPackagesHandler);
 router.put("/:id",authMiddleware,authorizeRoles("admin"),validateSchema(updatePackageSchema),updatePackageHandler);
 router.delete("/:id",authMiddleware,authorizeRoles("admin"),deletePackageHandler);
 

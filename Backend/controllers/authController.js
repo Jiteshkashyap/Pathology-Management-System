@@ -26,17 +26,18 @@ export const login = async(req , res)=>{
 
         res.status(200).cookie('accessToken',accessToken,{
             httpOnly:true,
-            secure:true,
-            sameSite:'None',
+            secure:false,
+            sameSite:'lax',
             maxAge:15*60*1000
         }).cookie('refreshToken',refreshToken,{
             httpOnly:true,
-            secure:true,
-            sameSite:'None',
+            secure:false,
+            sameSite:'lax',
             maxAge:7*24*60*60*1000,
             path:'/',
         }).json({
             message:"Login Succesfully",
+            user
             
         })
         
@@ -62,7 +63,7 @@ export const refreshTokenHandler= async(req,res)=>{
     return res.status(200).cookie('accessToken',accessToken,{
         httpOnly:true,
         secure:false,
-        sameSite:'strict',
+        sameSite:'lax',
         maxAge:15*60*1000
     }).json({
         message:'Token Refreshed succesfully'

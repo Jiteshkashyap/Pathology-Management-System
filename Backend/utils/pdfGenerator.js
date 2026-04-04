@@ -126,6 +126,6 @@ export const generatePDFReport = (report) => {
         { align: "right" }
       );
 
-    doc.end(); // ✅ MUST
+    doc.end(); 
   });
 };

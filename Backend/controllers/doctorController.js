@@ -1,79 +1,122 @@
-import { createDoctor,updateDoctor,getDoctors,deleteDoctor } from "../services/doctorService.js";
+import {
+  createDoctor,
+  updateDoctor,
+  getDoctors,
+  deleteDoctor
+} from "../services/doctorService.js";
+
 import redisClient from "../config/redis.js";
+import { uploadToS3 } from "../utils/s3helper.js";
 
-export const createDoctorHandler=async(req,res)=>{
-    try {
-        const {name,email,specialization,phone}=req.body
-        const doctor= await createDoctor({name,email,specialization,phone})
-
-        const keys = await redisClient.keys("doctor:list:*");
-        if (keys.length > 0) await redisClient.del(keys);
-            
-        res.status(201).json({
-            message:'Doctor Created Succesfully',
-            data:doctor
-        })        
-    } catch (error) {
-        res.status(400).json({ message:error.message})
-    }
-}
-
-export const getDoctorsHandler = async (req, res) => {
+export const createDoctorHandler = async (req, res) => {
   try {
-    const { page = 1, limit = 10, specialization } = req.query;
+    const {
+      name,
+      email,
+      specialization,
+      phone,
+      experience,
+      description
+    } = req.body;
 
-    // const cacheKey = `doctor:list:${page}:${limit}:${specialization || 'all'}`;
+    let imageUrl;
 
-    // const cached = await redisClient.get(cacheKey);
-    // if (cached) return res.json(JSON.parse(cached));
+    if (req.file) {
+      imageUrl = await uploadToS3(req.file);
+    }
 
-    const result = await getDoctors({
-      page: Number(page),
-      limit: Number(limit),
-      specialization
+    const doctor = await createDoctor({
+      name,
+      email,
+      specialization,
+      phone,
+      experience,
+      description,
+      image: imageUrl,
     });
 
-    // await redisClient.setEx(cacheKey, 300, JSON.stringify(result));
+    const keys = await redisClient.keys("doctor:list:*");
+    if (keys.length > 0) await redisClient.del(keys);
 
-    res.json(result);
-
+    res.status(201).json({
+      message: "Doctor Created Successfully",
+      data: doctor,
+    });
   } catch (error) {
     res.status(400).json({ message: error.message });
   }
 };
 
-export const updateDoctorHandler=async(req,res)=>{
-    try {
-        const{id}=req.params
-        const {name,email,specialization,phone}=req.body;
+export const getDoctorsHandler = async (req, res) => {
+  try {
+    const { page = 1, limit = 10, specialization } = req.query;
 
-        const doctor=await updateDoctor(id,{name,email,specialization,phone})
-        if(!doctor){
-            throw new Error('Doctor not found')
-        }
+    const result = await getDoctors({
+      page: Number(page),
+      limit: Number(limit),
+      specialization,
+    });
 
-       const keys = await redisClient.keys("doctor:list:*");
-       if (keys.length > 0) await redisClient.del(keys);
+    res.json(result);
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+};
 
-            return res.status(200).json({
-                message:"Doctor Updated Succesfully",
-                data:doctor
-            })
-    } catch (error) {
-        res.status(400).json({ message:error.message})
+export const updateDoctorHandler = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const {
+      name,
+      email,
+      specialization,
+      phone,
+      experience,
+      description
+    } = req.body;
+
+    let imageUrl;
+
+    if (req.file) {
+      imageUrl = await uploadToS3(req.file);
     }
-}
 
-export const deleteDoctorHandler= async(req,res)=>{
-    try {
-        const {id}=req.params
+    const doctor = await updateDoctor(id, {
+      name,
+      email,
+      specialization,
+      phone,
+      experience,
+      description,
+      ...(imageUrl && { image: imageUrl }),
+    });
 
-        await deleteDoctor(id)
-        
-        const keys = await redisClient.keys("doctor:list:*");
-        if (keys.length > 0) await redisClient.del(keys);
-        res.json({message:"Doctor Deleted Succesfully"})
-    } catch (error) {
-        res.status(400).json({ message:error.message})
-    }
-}
+    if (!doctor) throw new Error("Doctor not found");
+
+    const keys = await redisClient.keys("doctor:list:*");
+    if (keys.length > 0) await redisClient.del(keys);
+
+    res.status(200).json({
+      message: "Doctor Updated Successfully",
+      data: doctor,
+    });
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+};
+
+export const deleteDoctorHandler = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    await deleteDoctor(id);
+
+    const keys = await redisClient.keys("doctor:list:*");
+    if (keys.length > 0) await redisClient.del(keys);
+
+    res.json({ message: "Doctor Deleted Successfully" });
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+};

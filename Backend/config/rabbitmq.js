@@ -25,6 +25,7 @@ export const connectRabbitMQ = async () => {
         });
 
         await channel.assertQueue('reportEmailQueue', { durable: true });
+        await channel.assertQueue('appointmentEmailQueue', { durable: true });
         console.log("RabbitMQ Connected & Queue Asserted");
     } catch (error) {
         console.error("Failed to connect to RabbitMQ:", error);

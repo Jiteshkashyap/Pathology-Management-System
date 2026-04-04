@@ -8,7 +8,7 @@ import { createTestSchema,updateTestSchema } from "../validation/testValidation.
 const router= express.Router()
 
 router.post('/',authMiddleware,authorizeRoles('admin'),validateSchema(createTestSchema),createTestHandler);
-router.get('/',rateLimiter,authMiddleware,authorizeRoles('admin','technician'),getTestsHandler);
+router.get('/',rateLimiter,authMiddleware,authorizeRoles('admin','patient','technician'),getTestsHandler);
 router.put('/:id',authMiddleware,authorizeRoles('admin'),validateSchema(updateTestSchema),updateTestHandler);
 router.delete('/:id',authMiddleware,authorizeRoles('admin'),deleteTestHandler);
 

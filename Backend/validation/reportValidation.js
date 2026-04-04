@@ -1,9 +1,11 @@
 import Joi from "joi";
 
 export const createReportSchema = Joi.object({
-  patientName: Joi.string().required(),
+  patient:Joi.string().optional(),
+  patientName: Joi.string(),
   patientEmail: Joi.string().email().optional(),
-  patientAge: Joi.number().required(),
+  patientAge: Joi.number(),
+  appointmentId: Joi.string().optional(),
   doctor: Joi.string().required(),
   tests: Joi.array().items(Joi.string()).single().optional(),
   packageId: Joi.string().optional()

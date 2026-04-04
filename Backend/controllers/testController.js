@@ -21,19 +21,19 @@ export const getTestsHandler = async (req, res) => {
   try {
     const { page = 1, limit = 10, category } = req.query;
 
-    // const cacheKey = `test:list:${page}:${limit}:${category || "all"}`;
+    const cacheKey = `test:list:${page}:${limit}:${category || "all"}`;
 
-    // let cached = null;
+    let cached = null;
 
-    // try {
-    //   cached = await redisClient.get(cacheKey);
-    // } catch (err) {
-    //   console.log("Redis not available, skipping cache");
-    // }
+    try {
+      cached = await redisClient.get(cacheKey);
+    } catch (err) {
+      console.log("Redis not available, skipping cache");
+    }
 
-    // if (cached) {
-    //   return res.json(JSON.parse(cached));
-    // }
+    if (cached) {
+      return res.json(JSON.parse(cached));
+    }
 
     const result = await getTests({
       page: Number(page),
@@ -42,11 +42,11 @@ export const getTestsHandler = async (req, res) => {
     });
 
    
-    // try {
-    //   await redisClient.setEx(cacheKey, 3600, JSON.stringify(result));
-    // } catch (err) {
-    //   console.log("Redis set failed");
-    // }
+    try {
+      await redisClient.setEx(cacheKey, 3600, JSON.stringify(result));
+    } catch (err) {
+      console.log("Redis set failed");
+    }
 
     res.json(result);
 
@@ -54,7 +54,8 @@ export const getTestsHandler = async (req, res) => {
     res.status(400).json({ message: error.message });
   }
 };
-          export const updateTestHandler = async (req, res) => {
+
+export const updateTestHandler = async (req, res) => {
               try {
                    const { id } = req.params;
 
