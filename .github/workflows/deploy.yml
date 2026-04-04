@@ -21,5 +21,5 @@ jobs:
 
       - name: Build & Push Image
         run: |
-          docker build -t ${{ secrets.DOCKER_USERNAME }}/pathology-backend:latest .
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/pathology-backend:latest ./Backend
           docker push ${{ secrets.DOCKER_USERNAME }}/pathology-backend:latest
