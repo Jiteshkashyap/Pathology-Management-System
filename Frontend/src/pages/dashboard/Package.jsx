@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import Modal from "../components/Modal";
-import ConfirmDeleteModal from "../components/ConfirmDeleteModal";
-import PackageForm from "../forms/PackageForm";
-import Loader from "../components/Loader";
+import Modal from "../../components/Modal";
+import ConfirmDeleteModal from "../../components/ConfirmDeleteModal";
+import PackageForm from "../../forms/PackageForm"
+import Loader from "../../components/Loader";
 import toast from "react-hot-toast";
 
 import {
@@ -11,7 +11,7 @@ import {
   createPackages,
   updatePackages,
   deletePackages,
-} from "../services/apiServices";
+} from "../../services/apiServices";
 
 import {
   setPackages,
@@ -20,7 +20,7 @@ import {
   deletepackageState,
   setPackageLoading,
   setPackageError,
-} from "../redux/packageSlice";
+} from "../../redux/packageSlice";
 
 const Packages = () => {
   const dispatch = useDispatch();

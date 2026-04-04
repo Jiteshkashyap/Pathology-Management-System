@@ -5,7 +5,7 @@ import {
   createDoctor,
   updateDoctor,
   deleteDoctor,
-} from "../services/apiServices.js";
+} from "../../services/apiServices.js";
 
 import {
   setDoctors,
@@ -16,14 +16,14 @@ import {
   setDoctorError,
   setPage,
   setPagination
-} from "../redux/doctorSlice";
+} from "../../redux/doctorSlice.js";
 
-import Modal from "../components/Modal";
-import ConfirmDeleteModal from "../components/ConfirmDeleteModal";
-import DoctorForm from "../forms/DoctorForm";
+import Modal from "../../components/Modal.jsx";
+import ConfirmDeleteModal from "../../components/ConfirmDeleteModal.jsx";
+import DoctorForm from "../../forms/DoctorForm.jsx";
 import toast from "react-hot-toast";
-import Loader from "../components/Loader.jsx";
-import Pagination from "../components/Pagination.jsx";
+import Loader from "../../components/Loader.jsx";
+import Pagination from "../../components/Pagination.jsx";
 
 const Doctors = () => {
   const dispatch = useDispatch();

@@ -6,7 +6,7 @@ const Topbar = () => {
           Welcome Back 👋
         </h1>
         <p className="text-sm text-gray-500">
-          Diagnostic Center Management
+          Diagnostic Center Management new
         </p>
       </div>
 

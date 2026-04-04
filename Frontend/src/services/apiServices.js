@@ -1,7 +1,9 @@
 import axios from "axios";
+import store from "../redux/store"
+import { setUser, logoutUserState } from "../redux/authSlice";
 
 const api = axios.create({
-  baseURL: "https://pathology-backend-mqzq.onrender.com/api", 
+  baseURL: "http://localhost:5000/api", 
   withCredentials: true, // 
   headers: {
     "Content-Type": "application/json",
@@ -13,36 +15,38 @@ api.interceptors.response.use(
   async (error) => {
     const originalRequest = error.config;
 
+    if (!error.response) return Promise.reject(error);
 
-    //  No response (network error)
-    if (!error.response) {
-      return Promise.reject(error);
-    }
-
-    //  Skip refresh API (SAFE CHECK)
+    // skip refresh endpoint
     if (originalRequest?.url === "/auth/refresh-token") {
       return Promise.reject(error);
     }
 
-    //  Prevent multiple retries
     if (originalRequest._retry) {
       return Promise.reject(error);
     }
 
-    //  ONLY handle 401
-    if (error.response.status === 401) {
+    if (
+      error.response.status === 401 ||
+      error.response.status === 403
+    ) {
       originalRequest._retry = true;
 
       try {
-        console.log("Calling refresh token...");
+        // 1️ refresh token
+        await refreshToken();
 
-        const res = await refreshToken(); 
-        console.log("Refresh success:", res);
+        // 2️ fetch user
+        const res = await api.get("/users/me");
 
+        // 3️ update redux
+        store.dispatch(setUser(res.data));
+
+        // 4️ retry original request
         return api(originalRequest);
-      } catch (err) {
-        console.log("Refresh failed:", err?.response?.data);
 
+      } catch (err) {
+        store.dispatch(logoutUserState());
         window.location.href = "/login";
         return Promise.reject(err);
       }
@@ -51,6 +55,8 @@ api.interceptors.response.use(
     return Promise.reject(error);
   }
 );
+
+
 
 
 
@@ -78,6 +84,7 @@ export const logoutUser = async () => {
   return response.data;
 };
 
+// DOCTOR APIs
 
 
 export const getDoctors = async ({ page, limit, specialization }) => {
@@ -88,12 +95,20 @@ export const getDoctors = async ({ page, limit, specialization }) => {
 };
 
 export const createDoctor = async (data) => {
-  const response = await api.post("/doctors", data);
+  const response = await api.post("/doctors", data, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
   return response.data;
 };
 
 export const updateDoctor = async (id, data) => {
-  const response = await api.put(`/doctors/${id}`, data);
+  const response = await api.put(`/doctors/${id}`, data, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
   return response.data;
 };
 
@@ -124,6 +139,8 @@ export const deleteTests =async(id)=>{
  return response.data
 }
 
+// PACKAGES APIs
+
 export const getPackages = async()=>{
     const response = await api.get('/packages')
     return response.data
@@ -144,7 +161,7 @@ export const deletePackages =async(id)=>{
  return response.data
 }
 
-
+// REPORTS APIs
 
 export const getReports = async () => {
   const response = await api.get("/reports");
@@ -160,3 +177,108 @@ export const updateReportResults = async (id, data) => {
   const response = await api.put(`/reports/${id}/results`, data);
   return response.data;
 };
+
+// APPOINTMENT APIs
+
+export const getAvailableSlots = async (date) => {
+  const response = await api.get("/appointments/available-slots", {
+    params: { date }
+  });
+  return response.data;
+};
+
+export const bookAppointment = async (data) => {
+  const response = await api.post("/appointments/book", data);
+  return response.data;
+};
+
+export const getMyAppointments = async () => {
+  const response = await api.get("/appointments/my");
+  return response.data;
+};
+
+export const cancelAppointment = async (id) => {
+  const response = await api.delete(`/appointments/${id}`);
+  return response.data;
+};
+
+// ADMIN APPOINTMENTS
+
+export const getAllAppointmentsAPI = async (params) => {
+  const res = await api.get("/appointments", { params });
+  return res.data;
+};
+
+export const updateAppointmentStatusAPI = async (id, data) => {
+  const res = await api.patch(`/appointments/${id}/status`, data);
+  return res.data;
+};
+
+//PROFILE
+
+export const updateProfile = async (data) => {
+  const response = await api.patch("/users/me", data);
+  return response.data;
+};
+
+
+export const changePassword = async (data) => {
+  const response = await api.patch("/users/me/password", data);
+  return response.data;
+};
+
+
+// ADMIN APIs
+
+export const getAdminAnalytics = async (date) => {
+  const res = await api.get("/admin/analytics", {
+    params: { date }
+  });
+  return res.data;
+};
+
+export const getEmailLogs = async (params) => {
+  const res = await api.get("/admin/email-logs", { params });
+  return res.data;
+};
+
+export const getAuditLogs = async (params) => {
+  const res = await api.get("/admin/audit-logs", { params });
+  return res.data;
+};
+
+export const getUsers = async (params) => {
+  const res = await api.get("/admin/users", { params });
+  return res.data;
+};
+
+// PATIENT REPORTS
+
+export const getMyReportsAPI = async (params) => {
+  const res = await api.get("/reports/my", { params });
+  return res.data;
+};
+
+export const getReportDownloadUrlAPI = async (id) => {
+  const res = await api.get(`/reports/${id}/download`);
+  return res.data;
+};
+
+export const analyzeHealthReportAPI = async (formData) => {
+  const response = await api.post("/health/", formData, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
+  return response.data;
+};
+
+export const createCheckoutSession = async (data) => {
+  const response = await api.post(
+    "/payment/create-checkout-session",
+    data
+  );
+  return response.data;
+};
+
+export default api;

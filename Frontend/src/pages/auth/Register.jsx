@@ -7,6 +7,7 @@ import {
   setError,
   clearError,
 } from "../../redux/authSlice";
+import { motion } from "framer-motion";
 
 const Register = () => {
   const dispatch = useDispatch();
@@ -24,17 +25,16 @@ const Register = () => {
       email: e.target.email.value,
       password: e.target.password.value,
       role: e.target.role.value,
+      phone: e.target.phone.value,
+      age: e.target.age.value,
     };
 
     try {
       const response = await registerUser(formData);
 
-      // backend should return user info
       dispatch(setUser(response.user));
-
       dispatch(setLoading(false));
 
-      // redirect to dashboard
       navigate("/login");
     } catch (err) {
       dispatch(
@@ -44,60 +44,70 @@ const Register = () => {
   };
 
   return (
-    <div className="min-h-screen flex bg-gradient-to-br from-blue-900 to-blue-600">
+    <>
+      <motion.div
+        initial={{ opacity: 0, y: 60, scale: 0.95 }}
+        animate={{ opacity: 1, y: 0, scale: 1 }}
+        transition={{ duration: 0.5 }}
+        whileHover={{ y: -4 }}
+        className="w-full max-w-md p-10 rounded-2xl 
+        backdrop-blur-lg bg-white/80 border border-white/40 
+        shadow-xl"
+      >
+        <h2 className="text-2xl font-bold text-slate-800 mb-2">
+          Create Account ✨
+        </h2>
 
-      {/* Left Branding Section */}
-      <div className="hidden md:flex flex-col justify-center items-center w-1/2 text-white p-10">
-        <h1 className="text-4xl font-bold mb-4">🧪 Pathology System</h1>
-        <p className="text-lg text-blue-100 text-center max-w-md">
-          Create your admin or technician account to manage lab operations
-          securely and efficiently.
+        <p className="text-gray-500 text-sm mb-6">
+          Register as Admin or Technician
         </p>
-      </div>
 
-      {/* Right Form Section */}
-      <div className="flex justify-center items-center w-full md:w-1/2 bg-gray-100">
-        <div className="bg-white w-full max-w-md p-8 rounded-2xl shadow-xl">
+        <form className="space-y-4" onSubmit={handleRegister}>
+          
+          {/* COMMON INPUT STYLE */}
+          {[
+            { label: "Full Name", name: "name", type: "text", placeholder: "Enter full name" },
+            { label: "Email", name: "email", type: "email", placeholder: "Enter email" },
+            { label: "Password", name: "password", type: "password", placeholder: "Create password" },
+          ].map((field) => (
+            <div key={field.name}>
+              <label className="text-sm text-gray-600">{field.label}</label>
+              <input
+                name={field.name}
+                type={field.type}
+                placeholder={field.placeholder}
+                className="w-full mt-1 px-4 py-3 border border-gray-200 rounded-xl 
+                bg-white focus:outline-none focus:ring-2 focus:ring-cyan-600 
+                transition"
+                required
+              />
+            </div>
+          ))}
 
-          <h2 className="text-2xl font-bold text-gray-800 mb-2">
-            Create Account ✨
-          </h2>
-          <p className="text-gray-500 text-sm mb-6">
-            Register as Admin or Technician
-          </p>
-
-          <form className="space-y-5" onSubmit={handleRegister}>
+          {/* EXTRA FIELDS (CLEAN GROUP, NO BORDER LINE) */}
+          <div className="space-y-4 mt-2">
 
             <div>
-              <label className="text-sm text-gray-600">Full Name</label>
+              <label className="text-sm text-gray-600">Phone</label>
               <input
-                name="name"
-                type="text"
-                placeholder="Enter full name"
-                className="w-full mt-1 px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
-                required
+                name="phone"
+                type="tel"
+                placeholder="Enter phone number"
+                className="w-full mt-1 px-4 py-3 border border-gray-200 rounded-xl 
+                bg-white focus:outline-none focus:ring-2 focus:ring-cyan-600 
+                transition"
               />
             </div>
 
             <div>
-              <label className="text-sm text-gray-600">Email</label>
+              <label className="text-sm text-gray-600">Age</label>
               <input
-                name="email"
-                type="email"
-                placeholder="Enter email"
-                className="w-full mt-1 px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
-                required
-              />
-            </div>
-
-            <div>
-              <label className="text-sm text-gray-600">Password</label>
-              <input
-                name="password"
-                type="password"
-                placeholder="Create password"
-                className="w-full mt-1 px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
-                required
+                name="age"
+                type="number"
+                placeholder="Enter age"
+                className="w-full mt-1 px-4 py-3 border border-gray-200 rounded-xl 
+                bg-white focus:outline-none focus:ring-2 focus:ring-cyan-600 
+                transition"
               />
             </div>
 
@@ -105,41 +115,45 @@ const Register = () => {
               <label className="text-sm text-gray-600">Role</label>
               <select
                 name="role"
-                className="w-full mt-1 px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
-                required
+                className="w-full mt-1 px-4 py-3 border border-gray-200 rounded-xl 
+                bg-white focus:outline-none focus:ring-2 focus:ring-cyan-600 
+                transition"
               >
                 <option value="">Select Role</option>
                 <option value="admin">Admin</option>
                 <option value="technician">Technician</option>
+                <option value="patient">Patient</option>
               </select>
             </div>
 
-            <button
-              type="submit"
-              className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition duration-300"
-              disabled={loading}
-            >
-              {loading ? "Registering..." : "Register"}
-            </button>
+          </div>
 
-            {error && (
-              <p className="text-red-500 text-sm text-center">
-                {error}
-              </p>
-            )}
+          {/* BUTTON */}
+          <button
+            type="submit"
+            disabled={loading}
+            className="w-full bg-cyan-600 text-white py-3 rounded-xl 
+            font-semibold tracking-wide 
+            hover:bg-cyan-700 transition shadow-md hover:shadow-lg disabled:opacity-70"
+          >
+            {loading ? "Registering..." : "Register"}
+          </button>
 
-          </form>
+          {error && (
+            <p className="text-red-500 text-sm text-center">
+              {error}
+            </p>
+          )}
+        </form>
 
-          <p className="text-sm text-gray-500 mt-6 text-center">
-            Already have an account?{" "}
-            <Link to="/login" className="text-blue-600 font-medium">
-              Login
-            </Link>
-          </p>
-
-        </div>
-      </div>
-    </div>
+        <p className="text-sm text-gray-500 mt-6 text-center">
+          Already have an account?{" "}
+          <Link to="/login" className="text-cyan-600 font-medium">
+            Login
+          </Link>
+        </p>
+      </motion.div>
+    </>
   );
 };
 

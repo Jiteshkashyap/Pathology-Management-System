@@ -3,12 +3,17 @@ import authReducer from "./authSlice";
 import doctorReducer from './doctorSlice';
 import testReducer from './testSlice'
 import packageReducer from './packageSlice'
+import appointmentReducer from './appointmentSlice'
 
-export const store = configureStore({
+ const store = configureStore({
   reducer: {
     auth: authReducer,
     doctors: doctorReducer,
     tests:testReducer,
-    packages:packageReducer
+    packages:packageReducer,
+    appointments:appointmentReducer
   },
 });
+
+
+export default store;

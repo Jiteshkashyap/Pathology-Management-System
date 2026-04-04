@@ -1,13 +1,14 @@
+
 import { useEffect, useState } from "react";
-import Modal from "../components/Modal";
-import ReportForm from "../forms/ReportForm";
+import Modal from "../../components/Modal";
+import ReportForm from "../../forms/ReportForm";
 import {
   getReports,
   createReport,
   updateReportResults,
   getDoctors,
   getTests,
-} from "../services/apiServices";
+} from "../../services/apiServices";
 import toast from "react-hot-toast";
 
 const Reports = () => {
@@ -37,9 +38,6 @@ const fetchAll = async () => {
 
   useEffect(() => {
     fetchAll();
-    console.log(reports)
-    console.log(doctors)
-    console.log(tests)
   }, []);
 
   

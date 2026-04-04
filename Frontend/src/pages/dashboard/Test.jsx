@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
-import Modal from "../components/Modal";
-import ConfirmDeleteModal from "../components/ConfirmDeleteModal";
-import TestForm from "../forms/TestForm";
+import Modal from "../../components/Modal";
+import ConfirmDeleteModal from "../../components/ConfirmDeleteModal";
+import TestForm from "../../forms/TestForm";
 import { useDispatch,useSelector } from "react-redux";
 
 import { 
@@ -11,16 +11,16 @@ import {
   updateTestState,
   addTestState,
   deleteTestState
- } from "../redux/testSlice";
+ } from "../../redux/testSlice";
 
 import { 
   getTests,
  createTests,
  deleteTests,
  updateTests
-} from "../services/apiServices";
+} from "../../services/apiServices";
 import toast from "react-hot-toast";
-import Loader from "../components/Loader";
+import Loader from "../../components/Loader";
 
 const Tests = () => {
   const dispatch = useDispatch()

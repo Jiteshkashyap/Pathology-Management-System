@@ -7,6 +7,7 @@ import {
   setError,
   clearError,
 } from "../../redux/authSlice";
+import { motion } from "framer-motion";
 
 const Login = () => {
   const dispatch = useDispatch();
@@ -25,16 +26,17 @@ const Login = () => {
     };
 
     try {
-      const response = await loginUser(formData)
-      localStorage.setItem('isLoggedIn','true');
+      const response = await loginUser(formData);
+      
 
-      // backend should return user data
       dispatch(setUser(response.user));
-
       dispatch(setLoading(false));
 
-      // redirect to dashboard
-      navigate("/");
+      if (response.user.role === "patient") {
+         navigate("/");
+      }  else {
+       navigate("/dashboard");
+      }
     } catch (err) {
       dispatch(
         setError(err.response?.data?.message || "Login failed")
@@ -43,76 +45,92 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen flex bg-gradient-to-br from-blue-900 to-blue-600">
+    <>
 
-      {/* Left Branding Section */}
-      <div className="hidden md:flex flex-col justify-center items-center w-1/2 text-white p-10">
-        <h1 className="text-4xl font-bold mb-4">🧪 Pathology System</h1>
-        <p className="text-lg text-blue-100 text-center max-w-md">
-          Manage doctors, tests, packages, and reports efficiently with a
-          secure diagnostic management system.
-        </p>
-      </div>
+ 
 
-      {/* Right Form Section */}
-      <div className="flex justify-center items-center w-full md:w-1/2 bg-gray-100">
-        <div className="bg-white w-full max-w-md p-8 rounded-2xl shadow-xl">
 
-          <h2 className="text-2xl font-bold text-gray-800 mb-2">
-            Welcome Back 👋
-          </h2>
-          <p className="text-gray-500 text-sm mb-6">
-            Please login to your account
+  {/* RIGHT SIDE */}
+ 
+
+    <motion.div
+      initial={{ opacity: 0, y: 60, scale: 0.95 }}
+      animate={{ opacity: 1, y: 0, scale: 1 }}
+      transition={{ duration: 0.5 }}
+      whileHover={{ y: -4 }}   // ✨ subtle lift
+      className="w-full max-w-md p-8 rounded-2xl 
+      backdrop-blur-lg bg-white/70 border border-white/40 
+      shadow-xl"
+    >
+
+      <h2 className="text-2xl font-bold text-slate-800 mb-2">
+        Welcome Back 👋
+      </h2>
+
+      <p className="text-gray-500 text-sm mb-6">
+        Please login to your account
+      </p>
+
+      <form className="space-y-5" onSubmit={handleLogin}>
+
+        {/* EMAIL */}
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
+          <label className="text-sm text-gray-600">Email</label>
+          <input
+            name="email"
+            type="email"
+            placeholder="Enter your email"
+            className="w-full mt-1 px-4 py-2 border rounded-lg 
+            focus:outline-none focus:ring-2 focus:ring-cyan-600 
+            focus:border-transparent transition shadow-sm hover:shadow-md"
+            required
+          />
+        </motion.div>
+
+        {/* PASSWORD */}
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
+          <label className="text-sm text-gray-600">Password</label>
+          <input
+            name="password"
+            type="password"
+            placeholder="Enter your password"
+            className="w-full mt-1 px-4 py-2 border rounded-lg 
+            focus:outline-none focus:ring-2 focus:ring-cyan-600 
+            focus:border-transparent transition shadow-sm hover:shadow-md"
+            required
+          />
+        </motion.div>
+
+        {/* BUTTON */}
+        <button
+          type="submit"
+          disabled={loading}
+          className="w-full bg-cyan-600 text-white py-2 rounded-lg 
+          hover:bg-cyan-700 transition duration-300 shadow-md hover:shadow-lg"
+        >
+          {loading ? "Logging in..." : "Login"}
+        </button>
+
+        {error && (
+          <p className="text-red-500 text-sm text-center">
+            {error}
           </p>
+        )}
 
-          <form className="space-y-5" onSubmit={handleLogin}>
-            <div>
-              <label className="text-sm text-gray-600">Email</label>
-              <input
-                name="email"
-                type="email"
-                placeholder="Enter your email"
-                className="w-full mt-1 px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
-                required
-              />
-            </div>
+      </form>
 
-            <div>
-              <label className="text-sm text-gray-600">Password</label>
-              <input
-                name="password"
-                type="password"
-                placeholder="Enter your password"
-                className="w-full mt-1 px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
-                required
-              />
-            </div>
+      <p className="text-sm text-gray-500 mt-6 text-center">
+        Don’t have an account?{" "}
+        <Link to="/register" className="text-cyan-600 font-medium">
+          Register
+        </Link>
+      </p>
 
-            <button
-              type="submit"
-              className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition duration-300"
-              disabled={loading}
-            >
-              {loading ? "Logging in..." : "Login"}
-            </button>
+    </motion.div>
 
-            {error && (
-              <p className="text-red-500 text-sm text-center">
-                {error}
-              </p>
-            )}
-          </form>
 
-          <p className="text-sm text-gray-500 mt-6 text-center">
-            Don’t have an account?{" "}
-            <Link to="/register" className="text-blue-600 font-medium">
-              Register
-            </Link>
-          </p>
 
-        </div>
-      </div>
-    </div>
+</>
   );
 };
 
