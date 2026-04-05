@@ -2,7 +2,7 @@ import { motion } from "framer-motion";
 import { HeartPulse, Brain, Bone, ShieldPlus, Baby } from "lucide-react";
 import doc3 from "../assets/images/doc3.webp"
 import ortho from '../assets/images/otho.jpg'
-import cardio from "../assets/images/Cardio.webp"
+import cardio from "../assets/images/cardio.webp"
 import derma from "../assets/images/derma.jpg"
 import pediatrics from "../assets/images/pediatrics.webp"
 
