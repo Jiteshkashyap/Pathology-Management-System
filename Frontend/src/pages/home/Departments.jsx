@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
 import { HeartPulse, Brain, Bone, Baby, Shield, Ambulance } from "lucide-react";
 import ortho from '../../assets/images/otho.jpg'
-import cardio from "../../assets/images/Cardio.webp"
+import cardio from "../../assets/images/cardio.webp"
 import derma from "../../assets/images/derma.jpg"
 import pediatrics from "../../assets/images/pediatrics.webp"
 import neuro from "../../assets/images/neuro.avif"
