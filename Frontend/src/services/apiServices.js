@@ -3,7 +3,7 @@ import store from "../redux/store"
 import { setUser, logoutUserState } from "../redux/authSlice";
 
 const api = axios.create({
-  baseURL: "https://meditrusty.com/api", 
+  baseURL: "https://api.meditrusty.com/api", 
   withCredentials: true, // 
   headers: {
     "Content-Type": "application/json",
