@@ -5,48 +5,51 @@ import AppointmentModel from "../models/appointmentModel.js";
 
 const router = express.Router();
 
-router.post(
-  "/stripe-webhook",
-  express.raw({ type: "application/json" }),
-  async (req, res) => {
-    const sig = req.headers["stripe-signature"];
+router.post("/", async (req, res) => {
+  const sig = req.headers["stripe-signature"];
 
-    let event;
+  let event;
 
-    try {
-      event = stripe.webhooks.constructEvent(
-        req.body,
-        sig,
-        process.env.STRIPE_WEBHOOK_SECRET
-      );
-    } catch (err) {
-      console.log("Webhook Error:", err.message);
-      return res.status(400).send();
-    }
-
-    if (event.type === "checkout.session.completed") {
-      const session = event.data.object;
-
-      const bookingData = JSON.parse(session.metadata.bookingData);
-
-      // prevent duplicate booking
-      const exists = await AppointmentModel.findOne({
-        paymentId: session.id,
-      });
-
-      if (!exists) {
-        const appointment = await bookAppointment(bookingData);
-
-        appointment.paymentId = session.id;
-        appointment.paymentStatus = "paid";
-        appointment.amount = session.amount_total / 100;
-
-        await appointment.save();
-      }
-    }
-
-    res.json({ received: true });
+  try {
+    event = stripe.webhooks.constructEvent(
+      req.body,
+      sig,
+      process.env.STRIPE_WEBHOOK_SECRET
+    );
+  } catch (err) {
+    console.log(" Webhook Error:", err.message);
+    return res.status(400).send();
   }
-);
+
+  console.log(" Webhook hit:", event.type);
+
+  if (event.type === "checkout.session.completed") {
+    const session = event.data.object;
+
+    const bookingData = JSON.parse(session.metadata.bookingData);
+
+    console.log(" Booking Data:", bookingData);
+
+    const exists = await AppointmentModel.findOne({
+      paymentId: session.id,
+    });
+
+    if (!exists) {
+      const appointment = await bookAppointment(bookingData);
+
+      appointment.paymentId = session.id;
+      appointment.paymentStatus = "paid";
+      appointment.amount = session.amount_total / 100;
+
+      await appointment.save();
+
+      console.log(" Appointment created");
+    } else {
+      console.log(" Duplicate payment ignored");
+    }
+  }
+
+  res.json({ received: true });
+});
 
 export default router;
