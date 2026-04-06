@@ -53,7 +53,7 @@ export default function Doctors() {
   }, []);
 
   return (
-    <div className="pt-32 pb-20 bg-gray-50">
+    <div className="pt-20 md:pt-32 pb-20 bg-gray-50">
 
       {/* HEADER */}
       <div className="text-center mb-16">
@@ -75,12 +75,11 @@ export default function Doctors() {
         <Loader />
       ) : (
         <motion.div
-          variants={container}
-          initial="hidden"
-          whileInView="show"
-          viewport={{ once: true, amount: 0.2 }}
-          className="max-w-7xl mx-auto px-6 grid md:grid-cols-2 lg:grid-cols-4 gap-8"
-        >
+  variants={container}
+  initial="hidden"
+  animate="show"
+  className="max-w-7xl mx-auto px-4 sm:px-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8"
+>
 
           {doctors.map((doc, i) => (
 
