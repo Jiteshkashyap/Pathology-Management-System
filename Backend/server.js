@@ -32,15 +32,7 @@ const app= express()
 app.use(helmet())
 
 app.set('trust proxy', 1)
-// app.use(cors({
-//   origin: [
-//     "https://meditrusty.com",
-//     "https://www.meditrusty.com"
-//   ],
-//   credentials: true,
-//   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-//   allowedHeaders: ["Content-Type", "Authorization"]
-// }));
+
 
 
 app.use (compression())

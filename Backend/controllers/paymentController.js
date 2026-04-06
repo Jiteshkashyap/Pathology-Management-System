@@ -9,6 +9,8 @@ import {
 export const createCheckoutSession = async (req, res) => {
   const { test, package: pkgId, appointmentDate, slotTime } = req.body;
 
+  console.log("FRONTEND_URL:", process.env.FRONTEND_URL);
+
   let amount = 0;
   let name = "";
 
