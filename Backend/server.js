@@ -32,10 +32,14 @@ const app= express()
 app.use(helmet())
 
 app.set('trust proxy', 1)
-app.use(cors({ origin:[ "https://pathology-frontend-zx1t.onrender.com",
-  "http://localhost:5173"
-],
-    credentials: true,}))
+app.use(cors({
+  origin: [
+    "https://meditrusty.com",
+    "https://www.meditrusty.com",
+    "http://localhost:5173"
+  ],
+  credentials: true
+}));
 
 app.use (compression())
 
