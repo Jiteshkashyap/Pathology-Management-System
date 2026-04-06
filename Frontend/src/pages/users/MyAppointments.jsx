@@ -297,14 +297,14 @@ if (checkingPayment) {
             <div className="flex justify-between bg-white/60 p-3 rounded-xl">
               <span className="text-gray-500">Test</span>
               <span className="font-medium text-gray-800">
-                {selectedAppointment.test?.name || selectedAppointment.package?.name}
+                {selectedAppointment.tests?.name || selectedAppointment.package?.name}
               </span>
             </div>
 
             <div className="flex justify-between bg-white/60 p-3 rounded-xl">
               <span className="text-gray-500">Category</span>
               <span className="font-medium text-gray-800">
-                {selectedAppointment.test?.category || "Package"}
+                {selectedAppointment.tests?.category || "Package"}
               </span>
             </div>
 
@@ -344,11 +344,11 @@ if (checkingPayment) {
               </span>
             </div>
 
-            {selectedAppointment.price && (
+            {selectedAppointment.amount && (
               <div className="flex justify-between bg-white/60 p-3 rounded-xl">
                 <span className="text-gray-500">Amount</span>
                 <span className="font-semibold text-cyan-600">
-                  ₹{selectedAppointment.price}
+                  ₹{selectedAppointment.amount}
                 </span>
               </div>
             )}
