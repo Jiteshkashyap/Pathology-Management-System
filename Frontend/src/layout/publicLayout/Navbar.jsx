@@ -55,7 +55,7 @@ const Navbar = () => {
             <span className="absolute left-0 -bottom-1 h-[2px] w-0 bg-cyan-600 transition-all duration-300 group-hover:w-full hover:text-cyan-600"></span>
           </Link>
 
-          <Link to="/service" className="relative group">
+          <Link to="/services" className="relative group">
             Services
             <span className="absolute left-0 -bottom-1 h-[2px] w-0 bg-cyan-600 transition-all duration-300 group-hover:w-full hover:text-cyan-600"></span>
           </Link>
@@ -201,7 +201,7 @@ const Navbar = () => {
                 <Link to="/">Home</Link>
                 <Link to="/about">About</Link>
                 <Link to="/department">Departments</Link>
-                <Link to="/service">Services</Link>
+                <Link to="/services">Services</Link>
                 <Link to="/doctor">Doctors</Link>
                 <Link to="/contact">Contact</Link>
 
