@@ -30,11 +30,13 @@ const Navbar = () => {
 
         {/* Logo */}
         <Link to="/" className="flex items-center gap-2 font-bold text-lg">
-          <div className="bg-cyan-600 p-2 rounded text-white">
-            🏥
-          </div>
-          MediTrust
-        </Link>
+  <img 
+    src="/meditrustlogo.png" 
+    alt="Meditrusty logo"
+    className="w-10 h-10 object-contain"
+  />
+  <span className="text-gray-800">MediTrust</span>
+</Link>
 
 
         {/* Desktop Navbar (UNCHANGED) */}
