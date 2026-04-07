@@ -31,7 +31,7 @@ const Navbar = () => {
         {/* Logo */}
         <Link to="/" className="flex items-center gap-2 font-bold text-lg">
   <img 
-    src="/meditrustlogo.png" 
+    src="/public/logo.png" 
     alt="Meditrusty logo"
     className="w-auto h-10 object-contain"
   />
