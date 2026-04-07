@@ -91,40 +91,64 @@ const HealthAIModal = ({ open, close }) => {
       const data = res.data; // FIXED
 
       const formatted = [
-        `🧾 Summary: ${data.summary || "No summary available"}`,
+  `🧾 Summary:\n${data.summary || "No summary available"}`,
 
-        `⚠️ Issues:\n${
-          data.healthIssues?.length
-            ? data.healthIssues.map(i => `• ${i.testName}: ${i.issue}`).join("\n")
-            : "No issues found"
-        }`,
+  `⚠️ Issues:\n${
+    data.healthIssues?.length
+      ? data.healthIssues
+          .map(
+            i =>
+              `• ${i.testName}\n  Issue: ${i.issue}\n  Severity: ${i.severity}\n  Reason: ${i.reason}`
+          )
+          .join("\n\n")
+      : "No issues found"
+  }`,
 
-        `🚨 Risks:\n${
-          data.risks?.length
-            ? data.risks.map(r => `• ${r}`).join("\n")
-            : "No risks identified"
-        }`,
+  `✅ Good Indicators:\n${
+    data.goodIndicators?.length
+      ? data.goodIndicators.map(g => `• ${g}`).join("\n")
+      : "No good indicators"
+  }`,
 
-        `💡 Plan:\n${
-          data.improvementPlan?.length
-            ? data.improvementPlan.map(p => `• ${p.diet}`).join("\n")
-            : "No plan available"
-        }`,
+  `🚨 Risks:\n${
+    data.risks?.length
+      ? data.risks.map(r => `• ${r}`).join("\n")
+      : "No risks identified"
+  }`,
 
-        `📅 Recovery:\n${
-          data.recoveryPlan?.length
-            ? data.recoveryPlan.map(r => `• Day ${r.day}: ${r.plan}`).join("\n")
-            : "No recovery plan available"
-        }`,
+  `💡 Improvement Plan:\n${
+    data.improvementPlan?.length
+      ? data.improvementPlan
+          .map(
+            p =>
+              `• Diet: ${p.diet}\n  Exercise: ${p.exercise}\n  Habit: ${p.habit}`
+          )
+          .join("\n\n")
+      : "No plan available"
+  }`,
 
-        `❓ Common Questions:\n${
-          data.userQuestions?.length
-            ? data.userQuestions
-                .map(q => `Q: ${q.question}\nA: ${q.answer}`)
-                .join("\n\n")
-            : "No questions generated"
-        }`
-      ].join("\n\n");
+  `📅 Recovery Plan:\n${
+    data.recoveryPlan?.length
+      ? data.recoveryPlan
+          .map(
+            r =>
+              `• Day ${r.day}\n  Plan: ${r.plan}\n  Focus: ${r.focus}`
+          )
+          .join("\n\n")
+      : "No recovery plan available"
+  }`,
+
+  `❓ Common Questions:\n${
+    data.userQuestions?.length
+      ? data.userQuestions
+          .map(
+            q =>
+              `Q: ${q.question}\nA: ${q.answer}`
+          )
+          .join("\n\n")
+      : "No questions generated"
+  }`
+].join("\n\n");
 
       setChat((prev) => [
         ...prev.slice(0, -1),
