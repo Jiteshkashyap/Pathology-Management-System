@@ -31,8 +31,8 @@ const Navbar = () => {
         {/* Logo */}
         <Link to="/" className="flex items-center gap-2 font-bold text-lg">
   <img 
-    src="/public/logo.png" 
-    alt="Meditrusty logo"
+    src="/logo.png" 
+    alt="Meditrust"
     className="w-auto h-10 object-contain"
   />
   <span className="text-gray-800">MediTrust</span>

@@ -59,7 +59,7 @@ const Register = () => {
         </h2>
 
         <p className="text-gray-500 text-sm mb-6">
-          Register as Admin or Technician
+          Register Here
         </p>
 
         <form className="space-y-4" onSubmit={handleRegister}>
