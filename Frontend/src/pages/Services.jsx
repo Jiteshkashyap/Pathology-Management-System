@@ -110,16 +110,24 @@ const Services = () => {
         className="max-w-6xl mx-auto px-6 grid md:grid-cols-2 gap-8"
       >
 
-        {(activeTab === "tests" ? tests : packages).map((item, i) => (
+        {loading ? (
 
-          <motion.div key={item._id} variants={card}>
-            <ServiceCard
-              item={item}
-              type={activeTab === "tests" ? "test" : "package"}
-            />
-          </motion.div>
+  <div className="col-span-2 flex justify-center items-center py-20">
+    <div className="w-12 h-12 border-4 border-cyan-500 border-t-transparent rounded-full animate-spin"></div>
+  </div>
 
-        ))}
+) : (
+
+  (activeTab === "tests" ? tests : packages).map((item) => (
+    <motion.div key={item._id} variants={card}>
+      <ServiceCard
+        item={item}
+        type={activeTab === "tests" ? "test" : "package"}
+      />
+    </motion.div>
+  ))
+
+)}
 
       </motion.div>
 
