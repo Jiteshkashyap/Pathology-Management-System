@@ -33,7 +33,7 @@ const Navbar = () => {
   <img 
     src="/meditrustlogo.png" 
     alt="Meditrusty logo"
-    className="w-10 h-10 object-contain"
+    className="w-auto h-10 object-contain"
   />
   <span className="text-gray-800">MediTrust</span>
 </Link>
