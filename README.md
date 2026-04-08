@@ -56,24 +56,94 @@ Overall, the platform demonstrates a complete full-stack implementation with str
 
 ---
 
-## 🗄️ Backend & Database Architecture
-- Architecture Pattern:
-  - Controller → Service → Model
-- Responsibilities:
-  - Controllers → handle HTTP layer (req/res, validation)
-  - Services → core business logic & workflows
-  - Models → MongoDB schemas & DB interaction
-- Database Design:
-  - Hybrid approach (embedding + referencing)
-  - Indexed fields for performance
-  - Aggregation pipelines for analytics
-- Logic Handling:
-  - Test normal ranges stored in backend
-  - Evaluation done in service layer
-  - Results classified as Normal / Abnormal
+## 🏗️ Backend Architecture
+
+- **Architecture Pattern**
+  - Layered (3-Tier): Controller → Service → Model
+  - Ensures separation of concerns and maintainability
+
+- **Core Layers**
+  - Controllers
+    - Handle HTTP requests and responses
+    - Perform input validation
+    - Delegate logic to services
+  - Services
+    - Centralized business logic layer
+    - Handles workflows (appointments, reports, payments)
+    - Interacts with database models and external services
+  - Models
+    - Mongoose schemas for MongoDB
+    - Define data structure and persistence logic
+
+- **System Responsibilities**
+  - Authentication & Authorization (JWT, RBAC)
+  - Payment processing (Stripe integration)
+  - Report generation & processing
+  - AI integration (Gemini API)
+  - Queue handling via RabbitMQ
+  - Caching & locking via Redis
+  - Scheduled jobs via Node Cron
+
+- **Async & Background Processing**
+  - RabbitMQ workers for:
+    - Email notifications
+    - Report processing
+    - Heavy background tasks
+  - Node Cron for:
+    - Scheduled cleanup
+    - Maintenance tasks
+    - Time-based operations
+
+- **Scalability Considerations**
+  - Stateless API design
+  - Decoupled services
+  - Queue-based processing for heavy tasks
+  - Externalized storage (S3)
 
 ---
 
+## 🗄️ Database Architecture
+
+- **Database Type**
+  - MongoDB (NoSQL, document-based)
+
+- **Design Approach**
+  - Hybrid schema design:
+    - Referencing → for relationships (users, appointments, reports)
+    - Embedding → for nested/related data where needed
+  - Optimized for flexibility and performance
+
+- **Collections**
+  - Users
+  - Doctors
+  - Tests
+  - Packages
+  - Appointments
+  - Reports
+
+- **Performance Optimization**
+  - Indexed fields for frequent queries
+  - Optimized query patterns
+  - Reduced document size where required
+
+- **Aggregation Pipelines**
+  - Used for complex data relationships and analytics
+  - Examples:
+    - Joining reports with users and test data
+    - Generating analytics dashboards
+    - Computing aggregated test results in packages
+  - Enables efficient server-side data processing
+
+- **Business Logic Integration**
+  - Test normal ranges stored in database/backend
+  - Evaluation handled in service layer
+  - Results classified as Normal / Abnormal dynamically
+
+- **Scalability**
+  - Designed for horizontal scaling
+  - Handles large datasets and analytical queries efficiently
+ 
+    
 ## 🔄 System Flow / Architecture
 - Client → Nginx (Reverse Proxy + SSL)
 - Nginx → Node.js (Express API)
