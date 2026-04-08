@@ -229,17 +229,16 @@ Overall, the platform demonstrates a complete full-stack implementation with str
 ## 📁 Project Structure
 
 Backend/
-
- ├── controllers/
- ├── services/
- ├── models/
- ├── routes/
- ├── middleware/
- ├── utils/
- ├── validation/
- ├── jobs/
- ├── workers/
- └── server.js
+  ├── controllers/
+  ├── services/
+  ├── models/
+  ├── routes/
+  ├── middleware/
+  ├── utils/
+  ├── validation/
+  ├── jobs/
+  ├── workers/
+  └── server.js
 
  
 ---
