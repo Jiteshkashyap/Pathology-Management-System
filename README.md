@@ -229,6 +229,7 @@ Overall, the platform demonstrates a complete full-stack implementation with str
 ## 📁 Project Structure
 
 Backend/
+
  ├── controllers/
  ├── services/
  ├── models/
