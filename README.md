@@ -1,11 +1,17 @@
-# 🏥 Pathology Management System
+#  Pathology Management System
 
-Production-grade, scalable pathology system for diagnostics, appointments, reporting, and AI-powered insights.
+A production-grade, scalable Pathology Management System designed to digitize and optimize end-to-end diagnostic workflows. The platform enables seamless coordination between patients, technicians, and administrators while ensuring secure data handling, efficient processing, and high system reliability.
+
+The system supports appointment booking, multi-test package management, automated diagnostic report generation, and AI-powered medical insights. It is built using a modular, service-oriented backend architecture where business logic is centralized in services, ensuring clean separation of concerns and maintainability.
+
+Designed for real-world scalability, the application incorporates asynchronous processing using message queues, caching for performance optimization, distributed locking for concurrency control, and secure file handling via cloud storage. Additional integrations such as payment processing, email notifications, and scheduled background jobs make the system robust and production-ready.
+
+Overall, the platform demonstrates a complete full-stack implementation with strong emphasis on backend architecture, system design, and real-world engineering practices.
 
 ---
 
 ## 🌐 Live
-- Frontend: https://meditrusty.com
+- Link: https://meditrusty.com
 
 ---
 
