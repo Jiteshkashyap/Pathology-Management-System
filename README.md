@@ -1,4 +1,4 @@
-#  Pathology Management System
+# Meditrust - Pathology Management System
 
 A production-grade, scalable Pathology Management System designed to digitize and optimize end-to-end diagnostic workflows. The platform enables seamless coordination between patients, technicians, and administrators while ensuring secure data handling, efficient processing, and high system reliability.
 
